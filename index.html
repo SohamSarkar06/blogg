@@ -129,18 +129,30 @@
         for (let key in blogs) {
           const blog = blogs[key];
 
-          // Fetch author name
+          // Author name
           let authorName = "Unknown";
           const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
           if (authorSnapshot.exists()) {
             authorName = authorSnapshot.val().username || "Anonymous";
           }
 
+          // Likes
+          const likes = blog.likes || {};
+          const likeCount = Object.keys(likes).length;
+          const hasLiked = likes[currentUserId];
+
+          // Timestamp
+          const timestamp = new Date(blog.timestamp || Date.now()).toLocaleString();
+
           output += `
             <div class='blog-box'>
               <h4>${blog.title}</h4>
               <p>${blog.content}</p>
-              <small>Author: ${authorName}</small>
+              <small>Author: ${authorName}</small><br>
+              <small>Posted: ${timestamp}</small><br>
+              <button onclick="toggleLike('${key}')">
+                ${hasLiked ? "Unlike" : "Like"} (${likeCount})
+              </button>
               ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
             </div>
           `;
@@ -150,14 +162,26 @@
       });
     }
 
+    function toggleLike(blogId) {
+      const likeRef = db.ref(`blogs/${blogId}/likes/${currentUserId}`);
+      likeRef.once("value").then((snapshot) => {
+        if (snapshot.exists()) {
+          likeRef.remove(); // Unlike
+        } else {
+          likeRef.set(true); // Like
+        }
+      });
+    }
+
     function deleteBlog(blogId) {
       if (confirm("Are you sure you want to delete this blog?")) {
         db.ref("blogs/" + blogId).remove();
       }
     }
+
     function goToChat() {
-  location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
-}
+      location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
+    }
   </script>
 </body>
 </html>
