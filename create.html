@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Blog</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+  
+</head>
+<body>
+  <div class="container">
+    <h2>Create a New Blog</h2>
+    <input type="text" id="blog-title" placeholder="Blog Title">
+    <textarea id="blog-content" placeholder="Write your blog..."></textarea>
+    <button onclick="postBlog()">Post Blog</button>
+    <button onclick="location.href='index.html'">Back to Dashboard</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
+      authDomain: "blogsh-1fb30.firebaseapp.com",
+      databaseURL: "https://blogsh-1fb30-default-rtdb.firebaseio.com",
+      projectId: "blogsh-1fb30",
+      storageBucket: "blogsh-1fb30.appspot.com",
+      messagingSenderId: "621522269665",
+      appId: "1:621522269665:web:6e0075fef40dd094b9cea0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    let currentUserId = "";
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUserId = user.uid;
+      } else {
+        alert("You must be logged in.");
+        window.location.href = "index.html";
+      }
+    });
+
+    function postBlog() {
+      const title = document.getElementById("blog-title").value.trim();
+      const content = document.getElementById("blog-content").value.trim();
+      if (!title || !content) {
+        alert("Title and content required");
+        return;
+      }
+      const blogId = db.ref("blogs").push().key;
+      db.ref("blogs/" + blogId).set({
+        uid: currentUserId,
+        title,
+        content
+      }).then(() => {
+        alert("Blog posted!");
+        window.location.href = "index.html";
+      });
+    }
+  </script>
+</body>
+</html>
