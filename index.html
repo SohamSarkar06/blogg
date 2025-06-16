@@ -116,59 +116,54 @@
       });
     }
 
-    function fetchBlogs() {
-      db.ref("blogs").on("value", async (snapshot) => {
-        const blogs = snapshot.val();
-        if (!blogs) {
-          document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
-          return;
-        }
-
-        let output = "";
-
-        for (let key in blogs) {
-          const blog = blogs[key];
-
-          // Author name
-          let authorName = "Unknown";
-          const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
-          if (authorSnapshot.exists()) {
-            authorName = authorSnapshot.val().username || "Anonymous";
-          }
-
-          // Likes
-          const likes = blog.likes || {};
-          const likeCount = Object.keys(likes).length;
-          const hasLiked = likes[currentUserId];
-
-          // Timestamp
-          const timestamp = new Date(blog.timestamp || Date.now()).toLocaleString();
-
-          output += `
-            <div class='blog-box'>
-              <h4>${blog.title}</h4>
-              <p>${blog.content}</p>
-              <small>Author: ${authorName}</small><br>
-              <small>Posted: ${timestamp}</small><br>
-              <button onclick="toggleLike('${key}')">
-                ${hasLiked ? "Unlike" : "Like"} (${likeCount})
-              </button>
-              ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
-            </div>
-          `;
-        }
-
-        document.getElementById("blog-section").innerHTML = output;
-      });
+   function fetchBlogs() {
+  db.ref("blogs").on("value", async (snapshot) => {
+    const blogs = snapshot.val();
+    if (!blogs) {
+      document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
+      return;
     }
+
+    let output = "";
+
+    for (let key in blogs) {
+      const blog = blogs[key];
+
+      let authorName = "Unknown";
+      const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
+      if (authorSnapshot.exists()) {
+        authorName = authorSnapshot.val().username || "Anonymous";
+      }
+
+      const likes = blog.likes || {};
+      const likeCount = Object.keys(likes).length;
+      const hasLiked = likes[currentUserId];
+
+      output += `
+        <div class='blog-box'>
+          <h4>${blog.title}</h4>
+          <p>${blog.content}</p>
+          <small>Author: ${authorName}</small><br>
+          <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
+            ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
+          </button>
+          ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
+        </div>
+      `;
+    }
+
+    document.getElementById("blog-section").innerHTML = output;
+  });
+}
+
 
     function toggleLike(blogId) {
       const likeRef = db.ref(`blogs/${blogId}/likes/${currentUserId}`);
       likeRef.once("value").then((snapshot) => {
         if (snapshot.exists()) {
-          likeRef.remove(); // Unlike
+          likeRef.remove();
         } else {
-          likeRef.set(true); // Like
+          likeRef.set(true);
         }
       });
     }
@@ -183,5 +178,28 @@
       location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
     }
   </script>
+  <style>
+    .like-btn {
+      background-color: #6f6565;
+      border: 1px solid #555;
+      color: #eee;
+      border: none;
+  
+  font-weight: bold;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s, transform 0.2s;
+  height: 40px;
+    }
+    .like-btn:hover {
+      background-color: #7e6a6a;
+    }
+    .like-btn.liked {
+      background-color: #9e4a4a;
+      color: #fff;
+    }
+  </style>
 </body>
 </html>
