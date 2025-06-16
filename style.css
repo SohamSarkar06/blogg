@@ -17,6 +17,7 @@ body {
 
 
 .container {
+    min-height: 400px;
   background-color: #1e1e1e;
   padding: 30px;
   border-radius: 12px;
