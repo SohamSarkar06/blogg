@@ -8,9 +8,105 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+  <style>
+   body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+  }
+    .title {
+      text-align: center;
+      font-size: 36px;
+      color:  #03dac5;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 20px;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      margin: 30px auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+    input, button {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+    }
+    input {
+      background-color: #222;
+      color: white;
+    }
+    button {
+      background-color: #03dac5;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      max-width: 200px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 14px;
+
+    }
+   
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    .blog-box {
+      background: #222;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .like-btn {
+      background-color: #6f6565;
+      border: 1px solid #555;
+      color: #eee;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 14px;
+    }
+    .like-btn:hover {
+      background-color: #7e6a6a;
+    }
+    .like-btn.liked {
+      background-color: #9e4a4a;
+      color: #fff;
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
 </head>
 <body>
+    
   <div class="container" id="auth-section" style="display:none;">
+    <div class="title"><b><i>blogg</i></b></div><br>
     <h2>Login</h2>
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
@@ -19,17 +115,23 @@
   </div>
 
   <div class="container" id="account-section" style="display:none">
+    <div class="title"><b><i>blogg</i></b></div><br>
     <h2>Create Profile</h2>
     <input type="text" id="username" placeholder="Choose a username" />
     <button onclick="createAccount()">Create Account</button>
   </div>
 
   <div class="container" id="dashboard" style="display:none">
-    <h2>Welcome, <span id="display-username"></span></h2>
-    <button onclick="logout()">Logout</button>
-    <button onclick="location.href='create.html'">Create Blog</button>
-    <button onclick="goToChat()">Chat</button>
-
+    <div class="title"><b><i>blogg</i></b></div><br>
+    <div class="dashboard-header">
+      <h2>Welcome, <span id="display-username"></span></h2>
+      
+    </div>
+    <div class="action-buttons">
+      <button onclick="logout()">Logout</button>
+      <button onclick="location.href='create.html'">Create Blog</button>
+       <button onclick="goToChat()" style="float: right;">Chat</button>
+    </div>
     <h3>Explore Blogs</h3>
     <div id="blog-section"></div>
   </div>
@@ -116,46 +218,47 @@
       });
     }
 
-   function fetchBlogs() {
-  db.ref("blogs").on("value", async (snapshot) => {
-    const blogs = snapshot.val();
-    if (!blogs) {
-      document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
-      return;
+    function fetchBlogs() {
+      db.ref("blogs").on("value", async (snapshot) => {
+        const blogs = snapshot.val();
+        if (!blogs) {
+          document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
+          return;
+        }
+
+        let output = "";
+
+        for (let key in blogs) {
+          const blog = blogs[key];
+
+          let authorName = "Unknown";
+          const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
+          if (authorSnapshot.exists()) {
+            authorName = authorSnapshot.val().username || "Anonymous";
+          }
+
+          const likes = blog.likes || {};
+          const likeCount = Object.keys(likes).length;
+          const hasLiked = likes[currentUserId];
+
+          output += `
+            <div class='blog-box'>
+              <h4>${blog.title}</h4>
+              <p>${blog.content}</p>
+              <small>Author: ${authorName}</small><br>
+              <div class="button-row">
+                <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
+                  ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
+                </button>
+                ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
+              </div>
+            </div>
+          `;
+        }
+
+        document.getElementById("blog-section").innerHTML = output;
+      });
     }
-
-    let output = "";
-
-    for (let key in blogs) {
-      const blog = blogs[key];
-
-      let authorName = "Unknown";
-      const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
-      if (authorSnapshot.exists()) {
-        authorName = authorSnapshot.val().username || "Anonymous";
-      }
-
-      const likes = blog.likes || {};
-      const likeCount = Object.keys(likes).length;
-      const hasLiked = likes[currentUserId];
-
-      output += `
-        <div class='blog-box'>
-          <h4>${blog.title}</h4>
-          <p>${blog.content}</p>
-          <small>Author: ${authorName}</small><br>
-          <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
-            ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
-          </button>
-          ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
-        </div>
-      `;
-    }
-
-    document.getElementById("blog-section").innerHTML = output;
-  });
-}
-
 
     function toggleLike(blogId) {
       const likeRef = db.ref(`blogs/${blogId}/likes/${currentUserId}`);
@@ -178,28 +281,5 @@
       location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
     }
   </script>
-  <style>
-    .like-btn {
-      background-color: #6f6565;
-      border: 1px solid #555;
-      color: #eee;
-      border: none;
-  
-  font-weight: bold;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s, transform 0.2s;
-  height: 40px;
-    }
-    .like-btn:hover {
-      background-color: #7e6a6a;
-    }
-    .like-btn.liked {
-      background-color: #9e4a4a;
-      color: #fff;
-    }
-  </style>
 </body>
 </html>
