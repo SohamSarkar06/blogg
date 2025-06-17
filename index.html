@@ -15,6 +15,9 @@
     background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #fff;
+    display: flex;
+  align-items: center;
+  justify-content: center;
   }
     .title {
       text-align: center;
@@ -25,11 +28,21 @@
     }
     .container {
       background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
+      padding: 40px 30px;
       margin: 30px auto;
       max-width: 600px;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+       
+    }
+    .container1 {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px 30px;
+      margin: 30px auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+       text-align: center;
     }
     input, button {
       width: 100%;
@@ -101,18 +114,24 @@
       display: flex;
       gap: 10px;
     }
+    .login-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #03dac5;
+}
   </style>
 </head>
 <body>
     
-  <div class="container" id="auth-section" style="display:none;">
-    <div class="title"><b><i>blogg</i></b></div><br>
-    <h2>Login</h2>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-    <button onclick="signup()">Sign Up</button>
-  </div>
+  <div class="container1" id="auth-section" style="display:none;">
+  <div class="login-icon">🔐</div>
+  <div class="title"><b><i>blogg</i></b></div><br>
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Sign Up</button>
+</div>
 
   <div class="container" id="account-section" style="display:none">
     <div class="title"><b><i>blogg</i></b></div><br>
@@ -283,3 +302,4 @@
   </script>
 </body>
 </html>
+
