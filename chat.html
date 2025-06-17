@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Blog Applet</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Private Chat</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <style>
-   body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
-  }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
     .title {
       text-align: center;
       font-size: 36px;
@@ -25,115 +25,127 @@
     }
     .container {
       background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      margin: 30px auto;
       max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      max-height: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding:  15px;
     }
-    input, button {
+
+    h2 {
+      text-align: center;
+      margin: 20px 0 10px;
+    }
+
+    #userSearch {
+      padding: 10px;
+      max-height: 30px;
       width: 100%;
-      padding: 8px;
-      margin: 8px 0;
-      border-radius: 6px;
+      background: #1e1e1e;
+      color: white;
       border: none;
-      font-size: 14px;
+      border-radius: 5px;
+      margin-bottom: 10px;
     }
-    input {
-      background-color: #222;
+
+    .user-list {
+      max-height: 120px;
+      overflow-y: auto;
+      background: #1a1a1a;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .user-item {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      cursor: pointer;
+    }
+
+    .user-item:hover, .user-item.active {
+      background-color: #333;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      background-color: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 15px;
+      word-wrap: break-word;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .message.you {
+      align-self: flex-end;
+      background-color: #0066ff;
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+
+    .message.other {
+      align-self: flex-start;
+      background-color: #2a2a2a;
+      border-bottom-left-radius: 0;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      opacity: 0.6;
+      margin-top: 3px;
+      text-align: right;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #2a2a2a;
       color: white;
     }
-    button {
-      background-color: #03dac5;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      max-width: 200px;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.3s, transform 0.2s;
-      font-size: 14px;
 
-    }
-   
-    
-    button:hover {
-      background-color: #45a049;
-    }
-    .blog-box {
-      background: #222;
-      padding: 20px;
-      margin-top: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-    .button-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .like-btn {
-      background-color: #6f6565;
-      border: 1px solid #555;
-      color: #eee;
-      font-weight: bold;
-      padding: 8px 12px;
-      border-radius: 6px;
+    button {
+      padding: 10px 15px;
+      background-color: #0066ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      font-size: 14px;
-    }
-    .like-btn:hover {
-      background-color: #7e6a6a;
-    }
-    .like-btn.liked {
-      background-color: #9e4a4a;
-      color: #fff;
-    }
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .action-buttons {
-      display: flex;
-      gap: 10px;
     }
   </style>
 </head>
 <body>
-    
-  <div class="container" id="auth-section" style="display:none;">
-    <div class="title"><b><i>blogg</i></b></div><br>
-    <h2>Login</h2>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-    <button onclick="signup()">Sign Up</button>
-  </div>
+  <div class="container">
+    <div class="title"><b><i>blogg</i></b></div> <h2>Private chat</h2>
+   
+    <input type="text" id="userSearch" placeholder="Search users..." />
+    <div id="userList" class="user-list"></div>
 
-  <div class="container" id="account-section" style="display:none">
-    <div class="title"><b><i>blogg</i></b></div><br>
-    <h2>Create Profile</h2>
-    <input type="text" id="username" placeholder="Choose a username" />
-    <button onclick="createAccount()">Create Account</button>
-  </div>
+    <div id="chatBox" class="chat-box"></div>
 
-  <div class="container" id="dashboard" style="display:none">
-    <div class="title"><b><i>blogg</i></b></div><br>
-    <div class="dashboard-header">
-      <h2>Welcome, <span id="display-username"></span></h2>
-      
+    <div class="input-area">
+      <input type="text" id="messageInput" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
     </div>
-    <div class="action-buttons">
-      <button onclick="logout()">Logout</button>
-      <button onclick="location.href='create.html'">Create Blog</button>
-       <button onclick="goToChat()" style="float: right;">Chat</button>
-    </div>
-    <h3>Explore Blogs</h3>
-    <div id="blog-section"></div>
   </div>
 
   <script>
@@ -150,135 +162,109 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
+
     let currentUserId = "";
     let currentUsername = "";
+    let selectedUserId = "";
+    let userMap = {};
+
+    const userList = document.getElementById("userList");
+    const userSearch = document.getElementById("userSearch");
+    const chatBox = document.getElementById("chatBox");
 
     auth.onAuthStateChanged(user => {
-      if (user) {
-        currentUserId = user.uid;
-        checkUserProfile(currentUserId);
-      } else {
-        document.getElementById("auth-section").style.display = "block";
+      if (!user) {
+        alert("Not logged in");
+        window.location.href = "index.html";
+        return;
       }
+      currentUserId = user.uid;
+      db.ref("users/" + user.uid + "/username").once("value")
+        .then(snap => currentUsername = snap.val() || "You")
+        .then(loadUserList);
     });
 
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          currentUserId = userCredential.user.uid;
-          checkUserProfile(currentUserId);
-        })
-        .catch((error) => alert(error.message));
+    function loadUserList() {
+      db.ref("users").once("value", snapshot => {
+        userMap = {};
+        snapshot.forEach(child => {
+          const uid = child.key;
+          const username = child.val().username;
+          if (uid === currentUserId) return;
+          userMap[uid] = username;
+        });
+        renderUserList();
+      });
     }
 
-    function signup() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          currentUserId = userCredential.user.uid;
-          document.getElementById("auth-section").style.display = "none";
-          document.getElementById("account-section").style.display = "block";
-        })
-        .catch((error) => alert(error.message));
-    }
-
-    function createAccount() {
-      const username = document.getElementById("username").value;
-      db.ref("users/" + currentUserId).set({ username });
-      loadDashboard(username);
-    }
-
-    function checkUserProfile(uid) {
-      db.ref("users/" + uid).once("value").then((snapshot) => {
-        if (snapshot.exists()) {
-          const username = snapshot.val().username;
-          currentUsername = username;
-          loadDashboard(username);
-        } else {
-          document.getElementById("auth-section").style.display = "none";
-          document.getElementById("account-section").style.display = "block";
+    function renderUserList(filter = "") {
+      userList.innerHTML = "";
+      Object.entries(userMap).forEach(([uid, username]) => {
+        if (username.toLowerCase().includes(filter.toLowerCase())) {
+          const div = document.createElement("div");
+          div.className = "user-item";
+          div.textContent = username;
+          div.dataset.uid = uid;
+          if (uid === selectedUserId) div.classList.add("active");
+          div.onclick = () => {
+            selectedUserId = uid;
+            document.querySelectorAll('.user-item').forEach(item => item.classList.remove("active"));
+            div.classList.add("active");
+            listenForMessages();
+          };
+          userList.appendChild(div);
         }
       });
     }
 
-    function loadDashboard(username) {
-      document.getElementById("auth-section").style.display = "none";
-      document.getElementById("account-section").style.display = "none";
-      document.getElementById("dashboard").style.display = "block";
-      document.getElementById("display-username").innerText = username;
-      fetchBlogs();
-    }
+    userSearch.addEventListener("input", () => {
+      renderUserList(userSearch.value);
+    });
 
-    function logout() {
-      auth.signOut().then(() => {
-        location.reload();
+    function sendMessage() {
+      const msgInput = document.getElementById("messageInput");
+      const message = msgInput.value.trim();
+      if (!selectedUserId || !message) return;
+
+      const chatId = [currentUserId, selectedUserId].sort().join("_");
+      const chatRef = db.ref("chats/" + chatId);
+      chatRef.push({
+        senderId: currentUserId,
+        senderName: currentUsername,
+        message,
+        timestamp: Date.now()
       });
+
+      msgInput.value = "";
     }
 
-    function fetchBlogs() {
-      db.ref("blogs").on("value", async (snapshot) => {
-        const blogs = snapshot.val();
-        if (!blogs) {
-          document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
-          return;
-        }
+    document.getElementById("messageInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
 
-        let output = "";
+    function listenForMessages() {
+      chatBox.innerHTML = "";
+      if (!selectedUserId) return;
 
-        for (let key in blogs) {
-          const blog = blogs[key];
+      const chatId = [currentUserId, selectedUserId].sort().join("_");
+      const chatRef = db.ref("chats/" + chatId);
+      chatRef.off();
 
-          let authorName = "Unknown";
-          const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
-          if (authorSnapshot.exists()) {
-            authorName = authorSnapshot.val().username || "Anonymous";
-          }
+      chatRef.on("value", snapshot => {
+        chatBox.innerHTML = "";
+        snapshot.forEach(msgSnap => {
+          const msg = msgSnap.val();
+          const div = document.createElement("div");
+          div.className = "message";
+          div.classList.add(msg.senderId === currentUserId ? "you" : "other");
 
-          const likes = blog.likes || {};
-          const likeCount = Object.keys(likes).length;
-          const hasLiked = likes[currentUserId];
+          const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-          output += `
-            <div class='blog-box'>
-              <h4>${blog.title}</h4>
-              <p>${blog.content}</p>
-              <small>Author: ${authorName}</small><br>
-              <div class="button-row">
-                <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
-                  ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
-                </button>
-                ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
-              </div>
-            </div>
-          `;
-        }
-
-        document.getElementById("blog-section").innerHTML = output;
+          div.innerHTML = `<div>${msg.message}</div><div class="timestamp">${time}</div>`;
+          chatBox.appendChild(div);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
       });
-    }
-
-    function toggleLike(blogId) {
-      const likeRef = db.ref(`blogs/${blogId}/likes/${currentUserId}`);
-      likeRef.once("value").then((snapshot) => {
-        if (snapshot.exists()) {
-          likeRef.remove();
-        } else {
-          likeRef.set(true);
-        }
-      });
-    }
-
-    function deleteBlog(blogId) {
-      if (confirm("Are you sure you want to delete this blog?")) {
-        db.ref("blogs/" + blogId).remove();
-      }
-    }
-
-    function goToChat() {
-      location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
     }
   </script>
 </body>
