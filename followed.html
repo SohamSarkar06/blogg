@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Followed Blogs</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 36px;
+      color:  #03dac5;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 20px;
+    }
+
+    .blog-box {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .blog-box h4 {
+      margin: 0;
+    }
+
+    .button {
+      background-color: #03dac5;
+      border: none;
+      padding: 10px 16px;
+      margin-top: 20px;
+      color: black;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px 30px;
+      margin: 30px auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+       
+    }
+  </style>
+</head>
+<body>
+  <div class ="container" >
+  <div class="title"><b><i>blogg</i></b></div>
+  <h6>People you follow have posted!</h6>
+  <div id="followed-blogs"></div>
+  
+</div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
+      authDomain: "blogsh-1fb30.firebaseapp.com",
+      databaseURL: "https://blogsh-1fb30-default-rtdb.firebaseio.com",
+      projectId: "blogsh-1fb30",
+      storageBucket: "blogsh-1fb30.appspot.com",
+      messagingSenderId: "621522269665",
+      appId: "1:621522269665:web:6e0075fef40dd094b9cea0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    let currentUserId = "";
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUserId = user.uid;
+        loadFollowedBlogs();
+      } else {
+        alert("You must be logged in to view this page.");
+        window.location.href = "index.html";
+      }
+    });
+
+    function loadFollowedBlogs() {
+      db.ref("users/" + currentUserId + "/following").once("value").then(snapshot => {
+        const following = snapshot.val();
+        if (!following) {
+          document.getElementById("followed-blogs").innerHTML = "<p>You are not following anyone.</p>";
+          return;
+        }
+
+        const followedIds = Object.keys(following);
+        let blogPromises = followedIds.map(uid => {
+          return db.ref("blogs").orderByChild("uid").equalTo(uid).once("value")
+            .then(blogSnap => {
+              return { uid, blogs: blogSnap.val() };
+            });
+        });
+
+        Promise.all(blogPromises).then(results => {
+          let output = "";
+          results.forEach(result => {
+            const blogs = result.blogs;
+            const authorId = result.uid;
+            if (blogs) {
+              for (let key in blogs) {
+                const blog = blogs[key];
+                output += `
+                  <div class='blog-box'>
+                    <h4>${blog.title}</h4>
+                    <p>${blog.content}</p>
+                    <small>Author ID: ${authorId}</small>
+                  </div>
+                `;
+              }
+            }
+          });
+
+          if (output === "") {
+            output = "<p>No blogs from followed users yet.</p>";
+          }
+
+          document.getElementById("followed-blogs").innerHTML = output;
+        });
+      });
+    }
+  </script>
+</body>
+</html>
