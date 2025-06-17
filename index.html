@@ -147,12 +147,40 @@
       
     </div>
     <div class="action-buttons">
-      <button onclick="logout()">Logout</button>
-      <button onclick="location.href='create.html'">Create Blog</button>
-       <button onclick="goToChat()" style="float: right;">Chat</button>
+          
+      
+      
+    </button>
+      <button onclick="logout()">
+        <img src="https://img.icons8.com/ios-filled/50/exit.png" >
+        <span>Logout</span>
+      </button>
+      <button onclick="goToFollowedBlogs()">
+         <img src="https://img.icons8.com/external-anggara-basic-outline-anggara-putra/50/external-following-social-media-interface-anggara-basic-outline-anggara-putra.png" >
+        <span>Followed blogs</span>
+      </button>
+      <button onclick="location.href='create.html'">
+        <img src="https://img.icons8.com/sf-black-filled/64/create-new.png" >
+        <span>Create Blogs</span> 
+      </button>
+      <button onclick="goToMyBlogs()">
+        <img src="https://img.icons8.com/ios/50/blogger.png" >
+        <span>My Blogs</span>
+      </button>
+      <button onclick="goToChat()" style="float: right;">
+        <img src="https://img.icons8.com/sf-black-filled/64/chat.png" >
+        <span>Chat</span>
+      </button>
+        
     </div>
-    <h3>Explore Blogs</h3>
-    <div id="blog-section"></div>
+   
+
+
+
+<h3>Explore Blogs</h3>
+<div id="blog-section"></div>
+    
+
   </div>
 
   <script>
@@ -236,48 +264,75 @@
         location.reload();
       });
     }
+    function goToMyBlogs() {
+        location.href = `myblogs.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
+    }
 
     function fetchBlogs() {
-      db.ref("blogs").on("value", async (snapshot) => {
-        const blogs = snapshot.val();
-        if (!blogs) {
-          document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
-          return;
-        }
+    db.ref("blogs").on("value", async (snapshot) => {
+      const blogs = snapshot.val();
+      if (!blogs) {
+        document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
+        document.getElementById("followed-blog-section").innerHTML = "<p>No followed blogs yet.</p>";
+        return;
+      }
 
-        let output = "";
+      const allBlogs = [];
+      const followedBlogs = [];
 
-        for (let key in blogs) {
-          const blog = blogs[key];
+      const userSnapshot = await db.ref(`users/${currentUserId}/following`).once("value");
+      const following = userSnapshot.exists() ? Object.keys(userSnapshot.val()) : [];
 
-          let authorName = "Unknown";
-          const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
-          if (authorSnapshot.exists()) {
-            authorName = authorSnapshot.val().username || "Anonymous";
-          }
+      for (let key in blogs) {
+        const blog = blogs[key];
+        const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
+        const authorName = authorSnapshot.exists() ? authorSnapshot.val().username : "Unknown";
 
-          const likes = blog.likes || {};
-          const likeCount = Object.keys(likes).length;
-          const hasLiked = likes[currentUserId];
+        const likes = blog.likes || {};
+        const likeCount = Object.keys(likes).length;
+        const hasLiked = likes[currentUserId];
+        const isFollowing = following.includes(blog.uid);
 
-          output += `
-            <div class='blog-box'>
-              <h4>${blog.title}</h4>
-              <p>${blog.content}</p>
-              <small>Author: ${authorName}</small><br>
-              <div class="button-row">
-                <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
-                  ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
-                </button>
-                ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : ""}
-              </div>
+        const followButton = blog.uid !== currentUserId
+          ? `<button onclick="toggleFollow('${blog.uid}')">${isFollowing ? 'Unfollow' : 'Follow'}</button>`
+          : "";
+
+        const blogHTML = `
+          <div class='blog-box'>
+            <h4>${blog.title}</h4>
+            <p>${blog.content}</p>
+            <small>Author: ${authorName}</small><br>
+            <div class="button-row">
+              <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
+                ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
+              </button>
+              ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : followButton}
             </div>
-          `;
-        }
+          </div>`;
 
-        document.getElementById("blog-section").innerHTML = output;
-      });
-    }
+        allBlogs.push(blogHTML);
+        if (following.includes(blog.uid)) {
+          followedBlogs.push(blogHTML);
+        }
+      }
+
+      document.getElementById("blog-section").innerHTML = allBlogs.join("");
+      document.getElementById("followed-blog-section").innerHTML = followedBlogs.length > 0
+        ? followedBlogs.join("")
+        : "<p>No followed blogs yet.</p>";
+    });
+  }
+
+  function toggleFollow(targetUserId) {
+    const followRef = db.ref(`users/${currentUserId}/following/${targetUserId}`);
+    followRef.once("value").then(snapshot => {
+      if (snapshot.exists()) {
+        followRef.remove();
+      } else {
+        followRef.set(true);
+      }
+    });
+  }
 
     function toggleLike(blogId) {
       const likeRef = db.ref(`blogs/${blogId}/likes/${currentUserId}`);
@@ -299,7 +354,11 @@
     function goToChat() {
       location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
     }
+   function goToFollowedBlogs() {
+    location.href = `followed.html`;
+  }
+</script>
+
   </script>
 </body>
 </html>
-
