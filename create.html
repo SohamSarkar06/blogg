@@ -9,54 +9,106 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <style>
-    body {
-      background-color: #121212;
-      color: #eee;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    
+   body {
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    .title {
+      text-align: center;
+      font-size: 36px;
+      color:  #03dac5;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 20px;
     }
     .container {
-      background-color: #1e1e1e;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.7); /* more transparent */
+      padding: 30px;
+      margin: 30px auto;
       max-width: 600px;
-      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     }
-    input, textarea, button {
+    input, button {
       width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      border: none;
+      padding: 8px;
+      margin: 8px 0;
       border-radius: 6px;
-      font-size: 1rem;
+      border: none;
+      font-size: 14px;
     }
-    input, textarea {
-      background-color: #2a2a2a;
-      color: #eee;
+    input {
+      background-color: #222;
+      color: white;
     }
     button {
-  background-color: #03dac5;
-  border: none;
-  color: #000;
-  font-weight: bold;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s, transform 0.2s;
-}
+      background-color: #03dac5;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 14px;
+    }
     button:hover {
-      background-color: #303f9f;
+      background-color: #45a049;
+    }
+    .blog-box {
+      background: #222;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .like-btn {
+      background-color: #6f6565;
+      border: 1px solid #555;
+      color: #eee;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 14px;
+    }
+    .like-btn:hover {
+      background-color: #7e6a6a;
+    }
+    .like-btn.liked {
+      background-color: #9e4a4a;
+      color: #fff;
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .action-buttons .chat-button {
+      margin-left: auto;
     }
   </style>
 </head>
 <body>
+</head>
+<body>
   <div class="container">
+    <div class="title"><b><i>blogg</i></b></div><br>
     <h2>Create a New Blog</h2>
     <input type="text" id="blog-title" placeholder="Blog Title">
     <textarea id="blog-content" placeholder="Write your blog..." rows="10"></textarea>
