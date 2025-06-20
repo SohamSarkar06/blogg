@@ -16,8 +16,8 @@
     background-size: cover;
     color: #fff;
     display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
   }
     .title {
       text-align: center;
@@ -69,9 +69,7 @@
       transition: background 0.3s, transform 0.2s;
       font-size: 14px;
 
-    }
-   
-    
+    }   
     button:hover {
       background-color: #45a049;
     }
@@ -86,10 +84,13 @@
       display: flex;
       gap: 10px;
       margin-top: 10px;
+      width: 100%;
+    
     }
     .like-btn {
       background-color: #6f6565;
       border: 1px solid #555;
+      
       color: #eee;
       font-weight: bold;
       padding: 8px 12px;
@@ -97,6 +98,7 @@
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
       font-size: 14px;
+      
     }
     .like-btn:hover {
       background-color: #7e6a6a;
@@ -120,11 +122,31 @@
   margin-bottom: 10px;
   color: #03dac5;
 }
+    .comment {
+      background: #222;
+      padding: 6px 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 100%;
+      height: 40%;
+    }
+    
+    .comment-section input {
+      width: 88%;
+      height: 30%;
+      background-color: #111;
+      color: white;
+    }
+    .comment-section button {
+      width: auto;
+      background-color: #03dac5;
+      color: black;
+    }
   </style>
 </head>
 <body>
-    
-  <div class="container1" id="auth-section" style="display:none;">
+    <div class="container1" id="auth-section" style="display:none;">
   <div class="login-icon">🔐</div>
   <div class="title"><b><i>blogg</i></b></div><br>
   <h2>Login</h2>
@@ -185,7 +207,7 @@
 
   </div>
 
-  <script>
+ <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
       authDomain: "blogsh-1fb30.firebaseapp.com",
@@ -270,61 +292,76 @@
         location.href = `myblogs.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
     }
 
-    function fetchBlogs() {
-    db.ref("blogs").on("value", async (snapshot) => {
-      const blogs = snapshot.val();
-      if (!blogs) {
-        document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
-        document.getElementById("followed-blog-section").innerHTML = "<p>No followed blogs yet.</p>";
-        return;
-      }
-
-      const allBlogs = [];
-      const followedBlogs = [];
-
-      const userSnapshot = await db.ref(`users/${currentUserId}/following`).once("value");
-      const following = userSnapshot.exists() ? Object.keys(userSnapshot.val()) : [];
-
-      for (let key in blogs) {
-        const blog = blogs[key];
-        const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
-        const authorName = authorSnapshot.exists() ? authorSnapshot.val().username : "Unknown";
-
-        const likes = blog.likes || {};
-        const likeCount = Object.keys(likes).length;
-        const hasLiked = likes[currentUserId];
-        const isFollowing = following.includes(blog.uid);
-
-        const followButton = blog.uid !== currentUserId
-          ? `<button onclick="toggleFollow('${blog.uid}')">${isFollowing ? 'Unfollow' : 'Follow'}</button>`
-          : "";
-
-        const blogHTML = `
-          <div class='blog-box'>
-            <h4>${blog.title}</h4>
-            <p>${blog.content}</p>
-            <small>Author: ${authorName}</small><br>
-            <div class="button-row">
-              <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
-                ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
-              </button>
-              ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : followButton}
-            </div>
-          </div>`;
-
-        allBlogs.push(blogHTML);
-        if (following.includes(blog.uid)) {
-          followedBlogs.push(blogHTML);
+      function fetchBlogs() {
+      db.ref("blogs").on("value", async (snapshot) => {
+        const blogs = snapshot.val();
+        if (!blogs) {
+          document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
+          return;
         }
-      }
 
-      document.getElementById("blog-section").innerHTML = allBlogs.join("");
-      document.getElementById("followed-blog-section").innerHTML = followedBlogs.length > 0
-        ? followedBlogs.join("")
-        : "<p>No followed blogs yet.</p>";
-    });
-  }
+        const allBlogs = [];
+        const userSnapshot = await db.ref(`users/${currentUserId}/following`).once("value");
+        const following = userSnapshot.exists() ? Object.keys(userSnapshot.val()) : [];
 
+        for (let key in blogs) {
+          const blog = blogs[key];
+          const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
+          const authorName = authorSnapshot.exists() ? authorSnapshot.val().username : "Unknown";
+
+          const likes = blog.likes || {};
+          const comments = blog.comments || {};
+          const likeCount = Object.keys(likes).length;
+          const hasLiked = likes[currentUserId];
+          const isFollowing = following.includes(blog.uid);
+
+          let commentsHTML = Object.values(comments).map(c => `<div class='comment'><strong>${c.username}:</strong> ${c.text}</div>`).join('');
+
+          const followBtn = blog.uid !== currentUserId
+            ? `<button onclick="toggleFollow('${blog.uid}')">${isFollowing ? 'Unfollow' : 'Follow'}</button>`
+            : "";
+
+          const blogHTML = `
+            <div class='blog-box'>
+              <h4>${blog.title}</h4>
+              <p>${blog.content}</p>
+              <small>Author: ${authorName}</small><br>
+              <div class="button-row">
+                <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
+                  ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
+                </button>
+                ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : followBtn}
+              </div>
+              <div class="comment-section">
+                
+                <input type="text" id="comment-input-${key}" placeholder="Add a comment..." />
+                <button onclick="postComment('${key}')">Post</button>
+                ${commentsHTML || '<div class="comment">No comments yet.</div>'}
+              </div>
+            </div>`;
+
+          allBlogs.push(blogHTML);
+        }
+
+        document.getElementById("blog-section").innerHTML = allBlogs.join("");
+      });
+    }
+
+   function postComment(blogId) {
+      const commentInput = document.getElementById(`comment-input-${blogId}`);
+      const commentText = commentInput.value.trim();
+      if (!commentText) return;
+
+      const commentRef = db.ref(`blogs/${blogId}/comments`).push();
+      commentRef.set({
+        uid: currentUserId,
+        username: currentUsername,
+        text: commentText,
+        timestamp: Date.now()
+      }).then(() => {
+        commentInput.value = '';
+      });
+    }
   function toggleFollow(targetUserId) {
     const followRef = db.ref(`users/${currentUserId}/following/${targetUserId}`);
     followRef.once("value").then(snapshot => {
@@ -361,6 +398,6 @@
   }
 </script>
 
-  </script>
+
 </body>
 </html>
