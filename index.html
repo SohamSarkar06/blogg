@@ -8,21 +8,25 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-   <style>
+  <style>
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      display: flex;
-      align-items: start;
-      justify-content: center;
       min-height: 100vh;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
       padding: 10px;
     }
 
@@ -34,48 +38,40 @@
       margin-top: 10px;
     }
 
-    .top-bar {
-      position: absolute;
-      top: 10px;
-      width: 100%;
-      max-width: 900px;
+    .top-bar, .dashboard-header, .action-buttons {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 10px;
-      z-index: 10;
       flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
     }
 
-    .chat-button {
+    .chat-button, button, input {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    input {
+      background-color: #222;
+      color: white;
+      width: 100%;
+    }
+
+    button {
       background-color: #03dac5;
       color: #000;
       font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 8px;
       cursor: pointer;
-      border: none;
-      transition: background 0.3s;
-      position: absolute;
-      right: 10px;
-      top: 10px;
     }
 
-    .chat-button:hover {
+    button:hover {
       background-color: #45a049;
     }
 
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 60px;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .container,
-    .container1 {
+    .container, .container1 {
       background: rgba(0, 0, 0, 0.7);
       padding: 30px 20px;
       margin: 20px auto;
@@ -85,106 +81,105 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     }
 
-    .container1 {
-      text-align: center;
-    }
-
-    input,
-    button {
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 1rem;
-    }
-
-    input {
-      background-color: #222;
-      color: white;
-    }
-
-    button {
-      background-color: #03dac5;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    .action-buttons button {
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
-      min-width: 120px;
-    }
-
     .blog-box {
-      background-color: rgb(133, 120, 120);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
-    .comment-section {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
+    .blog-content, .comment-list {
+      flex: 1 1 100%;
     }
 
-    .comment-section input[type="text"] {
-      flex: 0 0 70%;
-      padding: 8px;
-    }
-
-    .comment-section button {
-      flex: 0 0 20%;
-      padding: 8px;
+    .comment-list {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      overflow-y: auto;
+      max-height: 200px;
     }
 
     .comment {
       margin-top: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 10px;
+      border-radius: 6px;
     }
 
     .comment-username {
-      color:#03dac5;
+      color: #03dac5;
       font-weight: bold;
     }
 
-    .vertical-divider {
-  width: 5px;
-  background-color: #03dac5;
-  margin: 0 10px;
-}
+    .comment-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .comment-section input {
+      flex: 1;
+    }
+
+    .comment-section button {
+      flex: 0 0 auto;
+    }
+
+    .action-circle {
+      width: 70px;
+      height: 70px;
+      background-color: #03dac5;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .action-circle img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .action-circle:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 15px #03dac5, 0 0 30px rgba(3, 218, 197, 0.4);
+    }
+
+    .action-circle[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 769px) {
+      .blog-content {
+        flex: 2;
+      }
+      .comment-list {
+        flex: 1;
+      }
+    }
 
     @media (max-width: 768px) {
-           .top-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .action-buttons {
-        justify-content: center;
-      }
-
       .chat-button {
         position: static;
         align-self: center;
         margin-bottom: 10px;
-      }
-
-      .blog-box {
-        flex-direction: column;
-      }
-
-      .blog-content,
-      .comments-section-wrapper {
-        width: 100%;
-        padding: 0;
-        border-left: none;
       }
     }
   </style>
@@ -209,10 +204,7 @@
 
   <div class="container" id="dashboard" style="display:none">
     <div class="title"><b><i>blogg</i></b></div><br>
-    <button onclick="goToChat()" style="float: right;">
-        <img src="https://img.icons8.com/sf-black-filled/64/chat.png" >
-        <span>Chat</span>
-      </button>
+    
     <div class="dashboard-header">
       <h2>Welcome, <span id="display-username"></span></h2>
       
@@ -221,26 +213,24 @@
     </div>
     <div class="action-buttons">
           
-      
-      
-    
-      
-      <button onclick="logout()">
-        <img src="https://img.icons8.com/ios-filled/50/exit.png" >
-        <span>Logout</span>
-      </button>
-      <button onclick="goToFollowedBlogs()">
-         <img src="https://img.icons8.com/external-anggara-basic-outline-anggara-putra/50/external-following-social-media-interface-anggara-basic-outline-anggara-putra.png" >
-        <span>Followed blogs</span>
-      </button>
-      <button onclick="location.href='create.html'">
-        <img src="https://img.icons8.com/sf-black-filled/64/create-new.png" >
-        <span>Create Blogs</span> 
-      </button>
-      <button onclick="goToMyBlogs()">
-        <img src="https://img.icons8.com/ios/50/blogger.png" >
-        <span>My Blogs</span>
-      </button>
+      <div class="action-buttons">
+  <div class="action-circle" onclick="location.href='create.html'" title="Create Blog">
+    <img src="https://img.icons8.com/sf-black-filled/64/create-new.png" />
+  </div>
+  <div class="action-circle" onclick="goToMyBlogs()" title="My Blogs">
+    <img src="https://img.icons8.com/ios/50/blogger.png" />
+  </div>
+  <div class="action-circle" onclick="goToFollowedBlogs()" title="Followed Blogs">
+    <img src="https://img.icons8.com/external-anggara-basic-outline-anggara-putra/50/external-following-social-media-interface-anggara-basic-outline-anggara-putra.png" />
+  </div>
+  <div class="action-circle" onclick="goToChat()" title="Chat">
+    <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
+  </div>
+  <div class="action-circle" onclick="logout()" title="Logout">
+    <img src="https://img.icons8.com/ios-filled/50/exit.png" />
+  </div>
+</div>
+
       
         
     </div>
@@ -371,9 +361,9 @@
             ? `<button onclick="toggleFollow('${blog.uid}')">${isFollowing ? 'Unfollow' : 'Follow'}</button>`
             : "";
 
-          const blogHTML = `
-  <div class='blog-box' style="display: flex; gap: 20px;">
-    <div class="blog-left" style="flex: 2;">
+         const blogHTML = `
+  <div class='blog-box'>
+    <div class="blog-content">
       <h4>${blog.title}</h4>
       <p>${blog.content}</p>
       <small>Author: ${authorName}</small>
@@ -381,23 +371,23 @@
         <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
           ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
         </button>
-        ${blog.uid === currentUserId ? `<button class="delete-btn" onclick="deleteBlog('${key}')">Delete</button>` : `
+        ${blog.uid === currentUserId ? `
+          <button class="delete-btn" onclick="deleteBlog('${key}')">Delete</button>
+        ` : `
           <button class="follow-btn" onclick="toggleFollow('${blog.uid}')">
             ${isFollowing ? 'Unfollow' : 'Follow'}
-          </button>`}
+          </button>
+        `}
       </div>
-      <div class="divider"></div>
       <div class="comment-section">
         <input type="text" id="comment-input-${key}" placeholder="Add a comment..." />
         <button onclick="postComment('${key}')">Post</button>
       </div>
     </div>
-   
 
-    <div class="comment-list" style="flex: 1;">
+    <div class="comment-list">
       ${commentsHTML || '<div class="comment">No comments yet.</div>'}
     </div>
-
   </div>`;
 
           allBlogs.push(blogHTML);
