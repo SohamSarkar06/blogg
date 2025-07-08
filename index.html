@@ -8,140 +8,184 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-  <style>
-   body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      display: flex;
+      align-items: start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 10px;
+    }
+
     .title {
       text-align: center;
-      font-size: 36px;
-      color:  #03dac5;
+      font-size: 2.2rem;
+      color: #03dac5;
       text-shadow: 2px 2px 4px #ffffff;
-      margin-top: 20px;
+      margin-top: 10px;
     }
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px 30px;
-      margin: 30px auto;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-       
+
+    .top-bar {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      z-index: 10;
+      flex-wrap: wrap;
     }
+
+    .chat-button {
+      background-color: #03dac5;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+
+    .chat-button:hover {
+      background-color: #45a049;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 60px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .container,
     .container1 {
       background: rgba(0, 0, 0, 0.7);
-      padding: 40px 30px;
-      margin: 30px auto;
-      max-width: 600px;
+      padding: 30px 20px;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 900px;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-       text-align: center;
     }
-    input, button {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
+
+    .container1 {
+      text-align: center;
+    }
+
+    input,
+    button {
+      padding: 10px;
       border-radius: 6px;
       border: none;
-      font-size: 14px;
+      font-size: 1rem;
     }
+
     input {
       background-color: #222;
       color: white;
     }
+
     button {
       background-color: #03dac5;
-      border: none;
       color: #000;
       font-weight: bold;
-      max-width: 200px;
-      padding: 8px 12px;
-      border-radius: 6px;
       cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.3s, transform 0.2s;
-      font-size: 14px;
+      transition: background 0.3s;
+    }
 
-    }   
     button:hover {
       background-color: #45a049;
     }
-    .blog-box {
-      background: #222;
-      padding: 20px;
-      margin-top: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+    .action-buttons button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      min-width: 120px;
     }
-    .button-row {
+
+    .blog-box {
+      background-color: rgb(133, 120, 120);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .comment-section {
       display: flex;
       gap: 10px;
       margin-top: 10px;
-      width: 100%;
-    
     }
-    .like-btn {
-      background-color: #6f6565;
-      border: 1px solid #555;
-      
-      color: #eee;
-      font-weight: bold;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      font-size: 14px;
-      
+
+    .comment-section input[type="text"] {
+      flex: 0 0 70%;
+      padding: 8px;
     }
-    .like-btn:hover {
-      background-color: #7e6a6a;
-    }
-    .like-btn.liked {
-      background-color: #9e4a4a;
-      color: #fff;
-    }
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      max-width: 100%;
-    }
-    .login-icon {
-  font-size: 48px;
-  margin-bottom: 10px;
-  color: #03dac5;
-}
-    .comment {
-      background: #222;
-      padding: 6px 10px;
-      margin-top: 5px;
-      border-radius: 4px;
-      font-size: 14px;
-      width: 100%;
-      height: 40%;
-    }
-    
-    .comment-section input {
-      width: 82%;
-      height: 30%;
-      background-color: #111;
-      color: white;
-    }
+
     .comment-section button {
-      width: auto;
-      background-color: #03dac5;
-      color: black;
+      flex: 0 0 20%;
+      padding: 8px;
+    }
+
+    .comment {
+      margin-top: 10px;
+    }
+
+    .comment-username {
+      color:#03dac5;
+      font-weight: bold;
+    }
+
+    .vertical-divider {
+  width: 5px;
+  background-color: #03dac5;
+  margin: 0 10px;
+}
+
+    @media (max-width: 768px) {
+           .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .action-buttons {
+        justify-content: center;
+      }
+
+      .chat-button {
+        position: static;
+        align-self: center;
+        margin-bottom: 10px;
+      }
+
+      .blog-box {
+        flex-direction: column;
+      }
+
+      .blog-content,
+      .comments-section-wrapper {
+        width: 100%;
+        padding: 0;
+        border-left: none;
+      }
     }
   </style>
 </head>
@@ -165,19 +209,22 @@
 
   <div class="container" id="dashboard" style="display:none">
     <div class="title"><b><i>blogg</i></b></div><br>
-    <div class="dashboard-header">
-      <h2>Welcome, <span id="display-username"></span></h2><br>
-      <button onclick="goToChat()" style="float: right;">
+    <button onclick="goToChat()" style="float: right;">
         <img src="https://img.icons8.com/sf-black-filled/64/chat.png" >
         <span>Chat</span>
       </button>
+    <div class="dashboard-header">
+      <h2>Welcome, <span id="display-username"></span></h2>
+      
+      
       
     </div>
     <div class="action-buttons">
           
       
       
-    </button>
+    
+      
       <button onclick="logout()">
         <img src="https://img.icons8.com/ios-filled/50/exit.png" >
         <span>Logout</span>
@@ -206,7 +253,6 @@
     
 
   </div>
-
  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
@@ -293,7 +339,7 @@
     }
 
       function fetchBlogs() {
-      db.ref("blogs").on("value", async (snapshot) => {
+      db.ref("blogs").once("value").then(async (snapshot) => {
         const blogs = snapshot.val();
         if (!blogs) {
           document.getElementById("blog-section").innerHTML = "<p>No blogs yet.</p>";
@@ -304,7 +350,9 @@
         const userSnapshot = await db.ref(`users/${currentUserId}/following`).once("value");
         const following = userSnapshot.exists() ? Object.keys(userSnapshot.val()) : [];
 
-        for (let key in blogs) {
+        const sortedKeys = Object.keys(blogs).sort((a, b) => blogs[b].timestamp - blogs[a].timestamp);
+
+        for (let key of sortedKeys) {
           const blog = blogs[key];
           const authorSnapshot = await db.ref("users/" + blog.uid).once("value");
           const authorName = authorSnapshot.exists() ? authorSnapshot.val().username : "Unknown";
@@ -315,30 +363,42 @@
           const hasLiked = likes[currentUserId];
           const isFollowing = following.includes(blog.uid);
 
-          let commentsHTML = Object.values(comments).map(c => `<div class='comment'><strong>${c.username}:</strong> ${c.text}</div>`).join('');
+          let commentsHTML = Object.values(comments).map(c => 
+  `<div class='comment'><span class='comment-username'>${c.username}</span>: ${c.text}</div>`).join('');
+
 
           const followBtn = blog.uid !== currentUserId
             ? `<button onclick="toggleFollow('${blog.uid}')">${isFollowing ? 'Unfollow' : 'Follow'}</button>`
             : "";
 
           const blogHTML = `
-            <div class='blog-box'>
-              <h4>${blog.title}</h4>
-              <p>${blog.content}</p>
-              <small>Author: ${authorName}</small><br>
-              <div class="button-row">
-                <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
-                  ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
-                </button>
-                ${blog.uid === currentUserId ? `<button onclick="deleteBlog('${key}')">Delete</button>` : followBtn}
-              </div>
-              <div class="comment-section">
-                
-                <input type="text" id="comment-input-${key}" placeholder="Add a comment..." />
-                <button onclick="postComment('${key}')">Post</button>
-                ${commentsHTML || '<div class="comment">No comments yet.</div>'}
-              </div>
-            </div>`;
+  <div class='blog-box' style="display: flex; gap: 20px;">
+    <div class="blog-left" style="flex: 2;">
+      <h4>${blog.title}</h4>
+      <p>${blog.content}</p>
+      <small>Author: ${authorName}</small>
+      <div class="button-row">
+        <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
+          ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
+        </button>
+        ${blog.uid === currentUserId ? `<button class="delete-btn" onclick="deleteBlog('${key}')">Delete</button>` : `
+          <button class="follow-btn" onclick="toggleFollow('${blog.uid}')">
+            ${isFollowing ? 'Unfollow' : 'Follow'}
+          </button>`}
+      </div>
+      <div class="divider"></div>
+      <div class="comment-section">
+        <input type="text" id="comment-input-${key}" placeholder="Add a comment..." />
+        <button onclick="postComment('${key}')">Post</button>
+      </div>
+    </div>
+   
+
+    <div class="comment-list" style="flex: 1;">
+      ${commentsHTML || '<div class="comment">No comments yet.</div>'}
+    </div>
+
+  </div>`;
 
           allBlogs.push(blogHTML);
         }
