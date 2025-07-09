@@ -175,32 +175,27 @@
 /* Preserve horizontal layout across all screen sizes */
 @media (max-width: 768px) {
   .chat-container {
-    flex-direction: column;
-    position: relative;
-  }
-
-  .user-list {
+    display: flex;
+    flex-direction: row;
     width: 100%;
-    height: auto;
-    max-height: 50%;
-    overflow-y: auto;
-    z-index: 5;
     position: relative;
+    overflow: hidden;
   }
 
+  .user-list,
   .chat-area {
     width: 100%;
     height: 100%;
-    position: absolute;
-    left: 100%;
-    top: 0;
-    background-color: rgba(0, 0, 0, 0.95);
-    z-index: 10;
-    transition: left 0.3s ease-in-out;
+    flex-shrink: 0;
+    transition: transform 0.3s ease-in-out;
   }
 
-  .chat-area.active {
-    left: 0;
+  .chat-container.chat-active .user-list {
+    transform: translateX(-100%);
+  }
+
+  .chat-container.chat-active .chat-area {
+    transform: translateX(-100%);
   }
 
   .chat-header {
@@ -223,7 +218,6 @@
     cursor: pointer;
   }
 }
-
 
     
   </style>
