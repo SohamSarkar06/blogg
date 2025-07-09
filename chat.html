@@ -176,12 +176,16 @@
 @media (max-width: 768px) {
   .chat-container {
     flex-direction: column;
+    position: relative;
   }
 
   .user-list {
     width: 100%;
-    height: 100%;
-    display: block;
+    height: auto;
+    max-height: 50%;
+    overflow-y: auto;
+    z-index: 5;
+    position: relative;
   }
 
   .chat-area {
@@ -219,6 +223,7 @@
     cursor: pointer;
   }
 }
+
 
     
   </style>
@@ -444,17 +449,19 @@ function listenForAllChats() {
 if (Notification.permission !== "granted") {
   Notification.requestPermission();
 }
+function openChatView(username) {
+  document.getElementById("chatHeaderName").textContent = username;
+  document.getElementById("chatArea").classList.add("active");
 
-listenForAllChats();
-
+}
 function goBack() {
   document.getElementById("chatArea").classList.remove("active");
 }
 
-function openChatView(username) {
-  document.getElementById("chatHeaderName").textContent = username;
-  document.getElementById("chatArea").classList.add("active");
-}
+listenForAllChats();
+
+
+
   </script>
 </body>
 </html>
