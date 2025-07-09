@@ -4,147 +4,206 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Private Chat</title>
-  <link rel="stylesheet" href="style.css" />
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
       background-size: cover;
-      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .title {
-      text-align: center;
-      font-size: 36px;
-      color:  #03dac5;
+      float: left;
+      font-size: 2.2rem;
+      color: #03dac5;
       text-shadow: 2px 2px 4px #ffffff;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     .container {
+      width: 95%;
+      max-width: 1100px;
+      height: 95vh;
       background: rgba(0, 0, 0, 0.7);
-      max-width: 600px;
-      max-height: 1000px;
-      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      padding:  15px;
     }
 
-    h2 {
-      text-align: center;
-      margin: 20px 0 10px;
+    .header {
+      background: rgba(63, 61, 61, 0.7);;
+      padding: 12px 20px;
+      color: #5c7572;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: right;
+      max-height: 120px;
     }
 
-    #userSearch {
-      padding: 10px;
-      max-height: 30px;
-      width: 100%;
-      background: #1e1e1e;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      margin-bottom: 10px;
+    .chat-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
     }
 
     .user-list {
-      max-height: 120px;
+      width: 30%;
+      min-width: 250px;
+      background: #111b21;
+      border-right: 1px solid #2a3942;
       overflow-y: auto;
-      background: #1a1a1a;
-      border-radius: 8px;
+      color: white;
+      padding: 10px;
+    }
+
+    #userSearch {
+      width: 100%;
+      padding: 10px;
       margin-bottom: 10px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2a3942;
+      color: white;
     }
 
     .user-item {
-      padding: 10px;
-      border-bottom: 1px solid #333;
+      padding: 12px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      background-color: #2a3942;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
     .user-item:hover, .user-item.active {
-      background-color: #333;
+      background-color: #03dac5;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      position: relative;
     }
 
     .chat-box {
       flex: 1;
       overflow-y: auto;
-      background-color: #1a1a1a;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
     }
 
     .message {
       max-width: 70%;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 15px;
-      word-wrap: break-word;
-      position: relative;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 10px;
       line-height: 1.4;
+      position: relative;
+      word-wrap: break-word;
     }
 
-    .message.you {
+    .you {
       align-self: flex-end;
-      background-color: #0066ff;
-      color: white;
+      background-color: #03dac5;
+      color: black;
       border-bottom-right-radius: 0;
     }
 
-    .message.other {
+    .other {
       align-self: flex-start;
-      background-color: #2a2a2a;
+      background-color: #2a3942;
+      color: white;
       border-bottom-left-radius: 0;
     }
 
     .timestamp {
       font-size: 10px;
-      opacity: 0.6;
-      margin-top: 3px;
+      opacity: 0.7;
+      margin-top: 4px;
       text-align: right;
     }
 
     .input-area {
       display: flex;
-      gap: 10px;
+      padding: 10px;
+      background-color: #202c33;
+      border-top: 1px solid #2a3942;
     }
 
-    input[type="text"] {
+    #messageInput {
       flex: 1;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 12px;
+      border-radius: 20px;
       border: none;
-      background: #2a2a2a;
+      font-size: 1rem;
+      background-color: #2a3942;
       color: white;
     }
 
     button {
-      padding: 10px 15px;
-      background-color: #0066ff;
-      color: white;
+      padding: 12px 20px;
+      margin-left: 10px;
+      border-radius: 20px;
       border: none;
-      border-radius: 5px;
+      background-color: #03dac5;
+      color: black;
+      font-weight: bold;
       cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #25f4ee;
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        flex-direction: column;
+      }
+
+      .user-list {
+        width: 100%;
+        max-height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #2a3942;
+      }
+
+      .chat-area {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="title"><b><i>blogg</i></b></div> <h2>Private chat</h2>
-   
-    <input type="text" id="userSearch" placeholder="Search users..." />
-    <div id="userList" class="user-list"></div>
-
-    <div id="chatBox" class="chat-box"></div>
-
-    <div class="input-area">
-      <input type="text" id="messageInput" placeholder="Type your message..." />
-      <button onclick="sendMessage()">Send</button>
+    <div class="header"><div class="title"><b><i>blogg </i></b></div><i>Private Chat</i></div>
+    <div class="chat-container">
+      <div class="user-list">
+        <input type="text" id="userSearch" placeholder="Search users..." />
+        <div id="userList"></div>
+      </div>
+      <div class="chat-area">
+        <div id="chatBox" class="chat-box"></div>
+        <div class="input-area">
+          <input type="text" id="messageInput" placeholder="Type a message..." />
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -158,7 +217,6 @@
       messagingSenderId: "621522269665",
       appId: "1:621522269665:web:6e0075fef40dd094b9cea0"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
@@ -167,10 +225,15 @@
     let currentUsername = "";
     let selectedUserId = "";
     let userMap = {};
+    let messageListeners = {};
 
     const userList = document.getElementById("userList");
     const userSearch = document.getElementById("userSearch");
     const chatBox = document.getElementById("chatBox");
+
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
 
     auth.onAuthStateChanged(user => {
       if (!user) {
@@ -181,51 +244,89 @@
       currentUserId = user.uid;
       db.ref("users/" + user.uid + "/username").once("value")
         .then(snap => currentUsername = snap.val() || "You")
-        .then(loadUserList);
-    });
-
-    function loadUserList() {
-      db.ref("users").once("value", snapshot => {
-        userMap = {};
-        snapshot.forEach(child => {
-          const uid = child.key;
-          const username = child.val().username;
-          if (uid === currentUserId) return;
-          userMap[uid] = username;
+        .then(() => {
+          loadUserList();
+          listenForAllChats();
         });
-        renderUserList();
-      });
-    }
-
-    function renderUserList(filter = "") {
-      userList.innerHTML = "";
-      Object.entries(userMap).forEach(([uid, username]) => {
-        if (username.toLowerCase().includes(filter.toLowerCase())) {
-          const div = document.createElement("div");
-          div.className = "user-item";
-          div.textContent = username;
-          div.dataset.uid = uid;
-          if (uid === selectedUserId) div.classList.add("active");
-          div.onclick = () => {
-            selectedUserId = uid;
-            document.querySelectorAll('.user-item').forEach(item => item.classList.remove("active"));
-            div.classList.add("active");
-            listenForMessages();
-          };
-          userList.appendChild(div);
-        }
-      });
-    }
+    });
 
     userSearch.addEventListener("input", () => {
       renderUserList(userSearch.value);
     });
 
+    function loadUserList() {
+      db.ref("users").once("value", snapshot => {
+        const userPromises = [];
+        const tempMap = {};
+
+        snapshot.forEach(child => {
+          const uid = child.key;
+          const username = child.val().username;
+          if (uid === currentUserId) return;
+
+          const chatId = [currentUserId, uid].sort().join("_");
+          const p = db.ref("chats/" + chatId).limitToLast(1).once("value").then(snap => {
+            let latestTimestamp = 0;
+            snap.forEach(msg => {
+              latestTimestamp = msg.val().timestamp || 0;
+            });
+
+            return db.ref("lastRead/" + currentUserId + "/" + chatId).once("value").then(readSnap => {
+              const lastRead = readSnap.val() || 0;
+              tempMap[uid] = {
+                username,
+                unread: latestTimestamp > lastRead,
+                latestTimestamp
+              };
+            });
+          });
+
+          userPromises.push(p);
+        });
+
+        Promise.all(userPromises).then(() => {
+          userMap = Object.fromEntries(
+            Object.entries(tempMap).sort(([, a], [, b]) => b.latestTimestamp - a.latestTimestamp)
+          );
+          renderUserList();
+        });
+      });
+    }
+
+    function renderUserList(filter = "") {
+      userList.innerHTML = "";
+      Object.entries(userMap).forEach(([uid, data]) => {
+        const username = data.username;
+        const unread = data.unread;
+
+        if (username.toLowerCase().includes(filter.toLowerCase())) {
+          const div = document.createElement("div");
+          div.className = "user-item";
+          div.dataset.uid = uid;
+          if (uid === selectedUserId) div.classList.add("active");
+
+          div.onclick = () => {
+            selectedUserId = uid;
+            document.querySelectorAll('.user-item').forEach(item => item.classList.remove("active"));
+            div.classList.add("active");
+            listenForMessages();
+            loadUserList(); // Refresh unread badges
+          };
+
+          div.innerHTML = `
+            ${username}
+            ${unread ? '<span style="float:right; background:red; color:white; padding:3px 8px; border-radius:50%;">●</span>' : ''}
+          `;
+
+          userList.appendChild(div);
+        }
+      });
+    }
+
     function sendMessage() {
       const msgInput = document.getElementById("messageInput");
       const message = msgInput.value.trim();
       if (!selectedUserId || !message) return;
-
       const chatId = [currentUserId, selectedUserId].sort().join("_");
       const chatRef = db.ref("chats/" + chatId);
       chatRef.push({
@@ -234,7 +335,6 @@
         message,
         timestamp: Date.now()
       });
-
       msgInput.value = "";
     }
 
@@ -242,30 +342,70 @@
       if (e.key === "Enter") sendMessage();
     });
 
-    function listenForMessages() {
-      chatBox.innerHTML = "";
-      if (!selectedUserId) return;
+   function listenForMessages() {
+  chatBox.innerHTML = "";
+  if (!selectedUserId) return;
 
-      const chatId = [currentUserId, selectedUserId].sort().join("_");
+  const chatId = [currentUserId, selectedUserId].sort().join("_");
+  const chatRef = db.ref("chats/" + chatId);
+
+  // Clear old listener
+  chatRef.off();
+
+  // Set lastRead
+  db.ref("lastRead/" + currentUserId + "/" + chatId).set(Date.now());
+
+  chatRef.on("child_added", (msgSnap) => {
+    const msg = msgSnap.val();
+    const div = document.createElement("div");
+    div.className = "message " + (msg.senderId === currentUserId ? "you" : "other");
+    const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    div.innerHTML = `<div>${msg.message}</div><div class="timestamp">${time}</div>`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+}
+
+function listenForAllChats() {
+  db.ref("users").once("value", snapshot => {
+    snapshot.forEach(child => {
+      const otherUserId = child.key;
+      if (otherUserId === currentUserId) return;
+      const chatId = [currentUserId, otherUserId].sort().join("_");
+      if (messageListeners[chatId]) return;
+
       const chatRef = db.ref("chats/" + chatId);
-      chatRef.off();
+      chatRef.limitToLast(1).on("child_added", snap => {
+        const msg = snap.val();
+        if (msg.senderId !== currentUserId && otherUserId !== selectedUserId) {
+          if (userMap[otherUserId]) {
+            userMap[otherUserId].unread = true;
+            renderUserList(userSearch.value);
+          }
 
-      chatRef.on("value", snapshot => {
-        chatBox.innerHTML = "";
-        snapshot.forEach(msgSnap => {
-          const msg = msgSnap.val();
-          const div = document.createElement("div");
-          div.className = "message";
-          div.classList.add(msg.senderId === currentUserId ? "you" : "other");
-
-          const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-          div.innerHTML = `<div>${msg.message}</div><div class="timestamp">${time}</div>`;
-          chatBox.appendChild(div);
-        });
-        chatBox.scrollTop = chatBox.scrollHeight;
+          if (Notification.permission === "granted") {
+            new Notification(`New message from ${userMap[otherUserId]?.username || "Someone"}`, {
+              body: msg.message,
+              icon: "https://img.icons8.com/external-others-inmotus-design/67/external-Dot-keyboard-others-inmotus-design-5.png"
+            });
+          }
+        }
       });
-    }
+
+      messageListeners[chatId] = true;
+    });
+  });
+}
+
+
+   
+// Request notification permission
+if (Notification.permission !== "granted") {
+  Notification.requestPermission();
+}
+
+listenForAllChats();
+
   </script>
 </body>
 </html>
