@@ -69,15 +69,35 @@
       margin-top: 20px;
       display: none;
     }
+    .action-circle {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #7e8b89;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 10px;
+    }
+      ;
+    
+    
+    .action-circle img {
+      width: 70px;
+      height: 70px;
+       align-self: center
+    }
+
+    
+
+    
   </style>
 </head>
 <body>
   <div class="container">
     <div id="login-form">
-       <div class="title"><b><i>blogg</i></b></div><br>
+       <div class="title"><b><i>blogg</i></b><br></div><br>
     
-      <h2>Login <br> 
-🔐</h2>
+      <h2><div class="title" >
+    <img src="https://img.icons8.com/dotty/50/login-rounded-up.png" /></h2>
+    <h2>Login</h2>
       <input type="email" id="login-email" placeholder="Email" />
       <input type="password" id="login-password" placeholder="Password" />
       <button onclick="login()">Login</button>
@@ -86,11 +106,12 @@
 
     <div id="signup-form" class="hidden">
        <div class="title"><b><i>blogg</i></b></div><br>
-    
-      <h2>Signup <br> 
-🔐</h2></h2>
+     <h2><div class="action-circle" >
+    <img src="https://img.icons8.com/liquid-glass/48/add-user-male.png" /></h2>
+      <h2>Signup</h2>
       <input type="email" id="signup-email" placeholder="Email" />
       <input type="password" id="signup-password" placeholder="Password" />
+      
       <button onclick="signup()">Signup</button>
       <div class="link" onclick="toggleAuthForm('login')">Already have an account? Login</div>
     </div>
