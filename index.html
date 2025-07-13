@@ -59,7 +59,7 @@
     .link {
       text-align: center;
       margin-top: 15px;
-      color:  #03dac5;
+      color:  #29228a;
       cursor: pointer;
     }
     .hidden {
@@ -84,7 +84,9 @@
       height: 70px;
        align-self: center
     }
-
+    hr.solid {
+  border-top: 3px solid #03dac5;
+    }
     
 
     
@@ -101,7 +103,10 @@
       <input type="email" id="login-email" placeholder="Email" />
       <input type="password" id="login-password" placeholder="Password" />
       <button onclick="login()">Login</button>
-      <div class="link" onclick="toggleAuthForm('signup')">New user? Sign up</div>
+      <hr class="solid">
+      <div class="link">New user? Sign up</div>
+      <div class onclick="toggleAuthForm('signup')"><button >Singup</button></div>
+      
     </div>
 
     <div id="signup-form" class="hidden">
@@ -113,7 +118,9 @@
       <input type="password" id="signup-password" placeholder="Password" />
       
       <button onclick="signup()">Signup</button>
-      <div class="link" onclick="toggleAuthForm('login')">Already have an account? Login</div>
+      <hr class="solid">
+      <div class="link" >Already have an account? Login</div>
+       <div class onclick="toggleAuthForm('login')"><button >Login</button></div>
     </div>
     
     <button id="dashboard-btn" onclick="goToDashboard()"><div class="title"><b><i>blogg</i></b></div><br>Go to Dashboard</button>
