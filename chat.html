@@ -153,7 +153,7 @@
       margin-bottom: 10px;
       word-wrap: break-word;
     }
-
+    
     .you {
       align-self: flex-end;
       background: #03dac5;
@@ -195,7 +195,13 @@
     button:hover {
       background: #25f4ee;
     }
-
+    html, body {
+  height: 100vh; /* Instead of 100% */
+  overflow: hidden;
+}
+.chat-box {
+  touch-action: pan-y;
+}
     @media (min-width: 769px) {
       .chat-container {
         flex-direction: row;
@@ -296,7 +302,7 @@
     });
 
     function loadUserList() {
-      db.ref("users").once("value", snapshot => {
+      db.ref("users").once("value").then(snapshot =>  => {
         const userPromises = [];
         const tempMap = {};
 
