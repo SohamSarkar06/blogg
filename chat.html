@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#202c33" />
   <title>Private Chat</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
+  <link rel="icon" href="https://img.icons8.com/ios-filled/50/ffffff/chat.png"/>
   <style>
     * {
       box-sizing: border-box;
@@ -230,111 +232,109 @@
       </div>
     </div>
   </div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const firebaseConfig = {
+        apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
+        authDomain: "blogsh-1fb30.firebaseapp.com",
+        databaseURL: "https://blogsh-1fb30-default-rtdb.firebaseio.com",
+        projectId: "blogsh-1fb30",
+        storageBucket: "blogsh-1fb30.appspot.com",
+        messagingSenderId: "621522269665",
+        appId: "1:621522269665:web:6e0075fef40dd094b9cea0"
+      };
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
-      authDomain: "blogsh-1fb30.firebaseapp.com",
-      databaseURL: "https://blogsh-1fb30-default-rtdb.firebaseio.com",
-      projectId: "blogsh-1fb30",
-      storageBucket: "blogsh-1fb30.appspot.com",
-      messagingSenderId: "621522269665",
-      appId: "1:621522269665:web:6e0075fef40dd094b9cea0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.database();
 
-    let currentUserId = "";
-    let currentUsername = "";
-    let selectedUserId = "";
-    let userMap = {};
-    let messageListeners = {};
+      let currentUserId = "";
+      let currentUsername = "";
+      let selectedUserId = "";
+      let userMap = {};
+      let messageListeners = {};
 
-    const userList = document.getElementById("userList");
-    const userSearch = document.getElementById("userSearch");
-    const chatBox = document.getElementById("chatBox");
+      const userList = document.getElementById("userList");
+      const userSearch = document.getElementById("userSearch");
+      const chatBox = document.getElementById("chatBox");
 
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        alert("Not logged in");
-        window.location.href = "index.html";
-        return;
+      // Environment-safe Notification
+      if (typeof Notification !== "undefined" && Notification.permission !== "granted") {
+        Notification.requestPermission().catch(() => {});
       }
-      currentUserId = user.uid;
-      db.ref("users/" + user.uid + "/username").once("value")
-        .then(snap => currentUsername = snap.val() || "You")
-        .then(() => {
-          loadUserList();
-          listenForAllChats();
-        });
-    });
 
-    userSearch.addEventListener("input", () => {
-      renderUserList(userSearch.value);
-    });
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          if (typeof window !== "undefined") {
+            alert("Not logged in");
+            window.location.href = "index.html";
+          }
+          return;
+        }
 
-    function loadUserList() {
-      db.ref("users").once("value", snapshot => {
-        const userPromises = [];
-        const tempMap = {};
+        currentUserId = user.uid;
+        db.ref("users/" + user.uid + "/username").once("value")
+          .then(snap => currentUsername = snap.val() || "You")
+          .then(() => {
+            loadUserList();
+            listenForAllChats();
+          });
+      });
 
-        snapshot.forEach(child => {
-          const uid = child.key;
-          const username = child.val().username;
-          if (uid === currentUserId) return;
+      userSearch.addEventListener("input", () => renderUserList(userSearch.value));
 
-          const chatId = [currentUserId, uid].sort().join("_");
-          const p = db.ref("chats/" + chatId).limitToLast(1).once("value").then(snap => {
-            let latestTimestamp = 0;
-            snap.forEach(msg => {
-              latestTimestamp = msg.val().timestamp || 0;
+      function loadUserList() {
+        db.ref("users").once("value", snapshot => {
+          const promises = [];
+          const tempMap = {};
+
+          snapshot.forEach(child => {
+            const uid = child.key;
+            if (uid === currentUserId) return;
+
+            const username = child.val().username;
+            const chatId = [currentUserId, uid].sort().join("_");
+
+            const p = db.ref("chats/" + chatId).limitToLast(1).once("value").then(snap => {
+              let latest = 0;
+              snap.forEach(msg => latest = msg.val().timestamp || 0);
+              return db.ref("lastRead/" + currentUserId + "/" + chatId).once("value").then(readSnap => {
+                const lastRead = readSnap.val() || 0;
+                tempMap[uid] = {
+                  username,
+                  unread: latest > lastRead,
+                  latestTimestamp: latest
+                };
+              });
             });
 
-            return db.ref("lastRead/" + currentUserId + "/" + chatId).once("value").then(readSnap => {
-              const lastRead = readSnap.val() || 0;
-              tempMap[uid] = {
-                username,
-                unread: latestTimestamp > lastRead,
-                latestTimestamp
-              };
-            });
+            promises.push(p);
           });
 
-          userPromises.push(p);
+          Promise.all(promises).then(() => {
+            userMap = Object.fromEntries(
+              Object.entries(tempMap).sort(([, a], [, b]) => b.latestTimestamp - a.latestTimestamp)
+            );
+            renderUserList();
+          });
         });
+      }
 
-        Promise.all(userPromises).then(() => {
-          userMap = Object.fromEntries(
-            Object.entries(tempMap).sort(([, a], [, b]) => b.latestTimestamp - a.latestTimestamp)
-          );
-          renderUserList();
-        });
-      });
-    }
+      function renderUserList(filter = "") {
+        userList.innerHTML = "";
+        Object.entries(userMap).forEach(([uid, data]) => {
+          const { username, unread } = data;
+          if (!username.toLowerCase().includes(filter.toLowerCase())) return;
 
-    function renderUserList(filter = "") {
-      userList.innerHTML = "";
-      Object.entries(userMap).forEach(([uid, data]) => {
-        const username = data.username;
-        const unread = data.unread;
-
-        if (username.toLowerCase().includes(filter.toLowerCase())) {
           const div = document.createElement("div");
-          div.className = "user-item";
+          div.className = "user-item" + (uid === selectedUserId ? " active" : "");
           div.dataset.uid = uid;
-          if (uid === selectedUserId) div.classList.add("active");
-
           div.onclick = () => {
             selectedUserId = uid;
-            document.querySelectorAll('.user-item').forEach(item => item.classList.remove("active"));
+            document.querySelectorAll('.user-item').forEach(el => el.classList.remove("active"));
             div.classList.add("active");
-            listenForMessages();
             openChatView(username);
+            listenForMessages();
             loadUserList();
           };
 
@@ -342,91 +342,90 @@
             ${username}
             ${unread ? '<span style="float:right; background:red; color:white; padding:3px 8px; border-radius:50%;">●</span>' : ''}
           `;
-
           userList.appendChild(div);
-        }
-      });
-    }
-
-    function sendMessage() {
-      const msgInput = document.getElementById("messageInput");
-      const message = msgInput.value.trim();
-      if (!selectedUserId || !message) return;
-      const chatId = [currentUserId, selectedUserId].sort().join("_");
-      const chatRef = db.ref("chats/" + chatId);
-      chatRef.push({
-        senderId: currentUserId,
-        senderName: currentUsername,
-        message,
-        timestamp: Date.now()
-      });
-      msgInput.value = "";
-    }
-
-    document.getElementById("messageInput").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
-    });
-
-    function listenForMessages() {
-      chatBox.innerHTML = "";
-      if (!selectedUserId) return;
-      const chatId = [currentUserId, selectedUserId].sort().join("_");
-      const chatRef = db.ref("chats/" + chatId);
-      chatRef.off();
-      db.ref("lastRead/" + currentUserId + "/" + chatId).set(Date.now());
-
-      chatRef.on("child_added", (msgSnap) => {
-        const msg = msgSnap.val();
-        const div = document.createElement("div");
-        div.className = "message " + (msg.senderId === currentUserId ? "you" : "other");
-        const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        div.innerHTML = `<div>${msg.message}</div><div class="timestamp">${time}</div>`;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      });
-    }
-
-    function listenForAllChats() {
-      db.ref("users").once("value", snapshot => {
-        snapshot.forEach(child => {
-          const otherUserId = child.key;
-          if (otherUserId === currentUserId) return;
-          const chatId = [currentUserId, otherUserId].sort().join("_");
-          if (messageListeners[chatId]) return;
-
-          const chatRef = db.ref("chats/" + chatId);
-          chatRef.limitToLast(1).on("child_added", snap => {
-            const msg = snap.val();
-            if (msg.senderId !== currentUserId && otherUserId !== selectedUserId) {
-              if (userMap[otherUserId]) {
-                userMap[otherUserId].unread = true;
-                renderUserList(userSearch.value);
-              }
-
-              if (Notification.permission === "granted") {
-                new Notification(`New message from ${userMap[otherUserId]?.username || "Someone"}`, {
-                  body: msg.message,
-                  icon: "https://img.icons8.com/external-others-inmotus-design/67/external-Dot-keyboard-others-inmotus-design-5.png"
-                });
-              }
-            }
-          });
-
-          messageListeners[chatId] = true;
         });
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const msg = input.value.trim();
+        if (!selectedUserId || !msg) return;
+
+        const chatId = [currentUserId, selectedUserId].sort().join("_");
+        db.ref("chats/" + chatId).push({
+          senderId: currentUserId,
+          senderName: currentUsername,
+          message: msg,
+          timestamp: Date.now()
+        });
+
+        input.value = "";
+      }
+
+      document.getElementById("messageInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
       });
-    }
 
-    function openChatView(username) {
-      document.getElementById("chatHeaderName").textContent = username;
-      document.getElementById("chatArea").classList.add("active");
-    }
+      function listenForMessages() {
+        chatBox.innerHTML = "";
+        if (!selectedUserId) return;
+        const chatId = [currentUserId, selectedUserId].sort().join("_");
+        const chatRef = db.ref("chats/" + chatId);
+        chatRef.off();
+        db.ref("lastRead/" + currentUserId + "/" + chatId).set(Date.now());
 
-    function goBack() {
-      document.getElementById("chatArea").classList.remove("active");
-    }
+        chatRef.on("child_added", snap => {
+          const msg = snap.val();
+          const div = document.createElement("div");
+          div.className = "message " + (msg.senderId === currentUserId ? "you" : "other");
+          const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          div.innerHTML = `<div>${msg.message}</div><div class="timestamp">${time}</div>`;
+          chatBox.appendChild(div);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        });
+      }
 
-    listenForAllChats();
+      function listenForAllChats() {
+        db.ref("users").once("value", snapshot => {
+          snapshot.forEach(child => {
+            const otherId = child.key;
+            if (otherId === currentUserId) return;
+            const chatId = [currentUserId, otherId].sort().join("_");
+            if (messageListeners[chatId]) return;
+
+            const chatRef = db.ref("chats/" + chatId).limitToLast(1);
+            chatRef.on("child_added", snap => {
+              const msg = snap.val();
+              if (msg.senderId !== currentUserId && otherId !== selectedUserId) {
+                if (userMap[otherId]) userMap[otherId].unread = true;
+                renderUserList(userSearch.value);
+
+                if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+                  new Notification(`New message from ${userMap[otherId]?.username || "Someone"}`, {
+                    body: msg.message,
+                    icon: "https://img.icons8.com/external-others-inmotus-design/67/external-Dot-keyboard-others-inmotus-design-5.png"
+                  });
+                }
+              }
+            });
+
+            messageListeners[chatId] = true;
+          });
+        });
+      }
+
+      function openChatView(username) {
+        document.getElementById("chatHeaderName").textContent = username;
+        document.getElementById("chatArea").classList.add("active");
+      }
+
+      function goBack() {
+        document.getElementById("chatArea").classList.remove("active");
+      }
+
+      window.sendMessage = sendMessage;
+      window.goBack = goBack;
+    });
   </script>
 </body>
 </html>
