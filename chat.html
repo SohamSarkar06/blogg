@@ -302,7 +302,7 @@
     });
 
     function loadUserList() {
-      db.ref("users").once("value").then(snapshot =>  => {
+      db.ref("users").once("value" , snapshot =>  => {
         const userPromises = [];
         const tempMap = {};
 
