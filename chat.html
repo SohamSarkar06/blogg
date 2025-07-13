@@ -3,11 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#202c33">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/icon-192.png">
   <title>Private Chat</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -19,17 +14,11 @@
 
     html, body {
       margin: 0;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      padding: 0;
       height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: url('https://i.postimg.cc/0yQFjXNG/Picsart-25-06-17-13-14-02-761.jpg') no-repeat center center fixed;
       background-size: cover;
-    }
-
-    input,
-    textarea,
-    button {
-      font-size: 16px; /* Prevent iOS zoom */
     }
 
     .container {
@@ -103,8 +92,7 @@
       left: 100%;
       width: 100%;
       height: 100%;
-      background: url('https://i.postimg.cc/g01GTF4y/98d49b74c05b0f9f68473ec9a215933c.jpg') no-repeat center center fixed;
-      background-size: cover;
+      background-color: #2a3942;
       display: flex;
       flex-direction: column;
       transition: left 0.3s ease-in-out;
@@ -135,15 +123,11 @@
     }
 
     .chat-box {
-      background: url('https://i.postimg.cc/g01GTF4y/98d49b74c05b0f9f68473ec9a215933c.jpg') no-repeat center center fixed;
-      background-size: cover;
       flex: 1;
       overflow-y: auto;
       padding: 10px;
       display: flex;
       flex-direction: column;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
     }
 
     .message {
@@ -153,7 +137,7 @@
       margin-bottom: 10px;
       word-wrap: break-word;
     }
-    
+
     .you {
       align-self: flex-end;
       background: #03dac5;
@@ -195,39 +179,32 @@
     button:hover {
       background: #25f4ee;
     }
-    html, body {
-  height: 100vh; /* Instead of 100% */
-  overflow: hidden;
+@media (min-width: 769px) {
+  .chat-container {
+    flex-direction: row;
+  }
+
+  .chat-area {
+    position: relative;
+    left: 0 !important; /* ← Force visible */
+    width: 70%;
+    z-index: 1;
+  }
+
+  .user-list {
+    width: 30%;
+    max-width: none;
+    height: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .back-btn {
+    display: none; /* Hide back button on desktop */
+  }
 }
-.chat-box {
-  touch-action: pan-y;
-}
-    @media (min-width: 769px) {
-      .chat-container {
-        flex-direction: row;
-      }
 
-      .chat-area {
-        position: relative;
-        left: 0 !important;
-        width: 70%;
-        z-index: 1;
-      }
-
-      .user-list {
-        width: 30%;
-        max-width: none;
-        height: auto;
-        position: relative;
-        z-index: 2;
-      }
-
-      .back-btn {
-        display: none;
-      }
-    }
   </style>
-
 </head>
 <body>
   <div class="container">
@@ -302,7 +279,7 @@
     });
 
     function loadUserList() {
-      db.ref("users").once("value" , snapshot =>  => {
+      db.ref("users").once("value", snapshot => {
         const userPromises = [];
         const tempMap = {};
 
