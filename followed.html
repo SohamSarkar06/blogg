@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Followed Blogs</title>
-  <link rel="stylesheet" href="style.css">
+  <title>My Blog Profile</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -20,58 +19,295 @@
       flex-direction: column;
       align-items: center;
     }
-
-    .title {
-      text-align: center;
-      font-size: 36px;
-      color:  #03dac5;
-      text-shadow: 2px 2px 4px #ffffff;
-      margin-top: 20px;
-    }
-
-    .blog-box {
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 16px;
-      margin-bottom: 16px;
-      border-radius: 20px;
-      max-width: 700px;
-      width: 100%;
-    }
-
-    .blog-box h4 {
-      margin: 0;
-    }
-
-    .button {
-      background-color: #03dac5;
-      border: none;
-      padding: 10px 16px;
-      margin-top: 20px;
-      color: black;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-    }
     .container {
       background: rgba(0, 0, 0, 0.7);
       padding: 40px 30px;
       margin: 30px auto;
-      max-width: 600px;
+      width: 1000px;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-       
     }
+
+    .title {
+      text-align: center;
+      font-size: 36px;
+      color: #03dac5;
+      margin: 20px 0;
+    }
+
+    .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+   .profile-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+.profile-header h2 {
+  margin: 0;
+  color: #03dac5;
+}
+
+ .profile-stats {
+    display: flex;
+    gap: 30px;
+  }
+
+  .profile-stats span {
+    position: relative;
+    cursor: pointer;
+    color: #ffde59;
+    text-decoration: none; /* removed underline */
+    display: inline-block;
+  }
+
+
+
+    
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 20px;
+    }
+
+    .tab-title {
+      font-size: 15px;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .tab-title.active {
+      color: #5694c7;
+      font-weight: bold;
+    }
+
+    .profile-grid, .reel-feed {
+      display: none;
+    }
+
+    
+
+    .blog-card {
+      background: #1f1f1f;
+      padding: 16px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s;
+      width: 70%;
+    }
+
+    .blog-card:hover {
+      transform: scale(1.02);
+    }
+
+    .blog-card h4 {
+      margin: 0 0 10px;
+      color: #03dac5;
+    }
+
+    .profile-grid.active-tab,
+.reel-feed.active-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center; /* Center the blog cards horizontally */
+}
+
+.blog-card p {
+  font-size: 14px;
+  color: #ddd;
+  text-align: left; /* Ensure left alignment for blog content */
+}
+
+    .blog-card small {
+      color: #aaa;
+    }
+    
+.user-list {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.95);
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  top: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  z-index: 999;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+
+.user-list p {
+  margin: 5px 0;
+  color: #fff;
+  text-align: left;
+}
+ #username-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  .blog-card button {
+  background-color: #03dac5;
+  border: none;
+  padding: 6px 12px;
+  margin: 4px 6px 0 0;
+  border-radius: 5px;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.blog-card button:hover {
+  background-color: #02c0b5;
+}
+ .action-circle {
+      width: 70px;
+      height: 70px;
+      background-color: #03dac5;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .action-circle img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .action-circle:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 15px #03dac5, 0 0 30px rgba(3, 218, 197, 0.4);
+    }
+
+    .action-circle[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .bottom-action-bar {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 10px 20px;
+  border-radius: 40px;
+  z-index: 999;
+  box-shadow: 0 0 12px rgba(3, 218, 197, 0.4);
+}
+
+.bottom-action-bar .action-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-action-bar .action-circle img {
+  width: 28px;
+  height: 28px;
+}
+
+@media (max-width: 768px) {
+  .bottom-action-bar {
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  .bottom-action-bar .action-circle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .bottom-action-bar .action-circle img {
+    width: 24px;
+    height: 24px;
+  }
+}
   </style>
 </head>
 <body>
-  <div class ="container" >
- <div class="title"><a href="dashboard.html" style="text-decoration: none; color: inherit;">
-      <b><i>blogg</i></b>
-    </a></div><br
-  <h6>People you follow have posted!</h6>
-  <div id="followed-blogs"></div>
-  
+  <div class="container">
+    <div class="title"><a href="dashboard.html"><b><i>blogg</i></b></a></div>
+
+    <div class="profile-header">
+  <div class="profile-top">
+    <h2 id="username-display">Username</h2>
+    <div class="profile-stats">
+      <span onclick="toggleList('followers')">
+        Followers: <span id="followers-count">0</span>
+        <div id="followers-list" class="user-list"></div>
+      </span>
+      <span onclick="toggleList('following')">
+        Following: <span id="following-count">0</span>
+        <div id="following-list" class="user-list"></div>
+      </span>
+    </div>
+  </div>
 </div>
+
+ <div class="bottom-action-bar">
+  <div class="action-circle" onclick="location.href='create.html'" title="Create Blog">
+    <img src="https://img.icons8.com/sf-black-filled/64/create-new.png" />
+  </div>
+  
+  <div class="action-circle" onclick="goToFollowedBlogs()" title="My Profile">
+    <img src="https://img.icons8.com/fluency-systems-regular/48/user-male-circle--v1.png"/>
+  </div>
+  <div class="action-circle" onclick="goToChat()" title="Chat">
+    <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
+  </div>
+  <div class="action-circle" onclick="logout()" title="Logout">
+    <img src="https://img.icons8.com/ios-filled/50/exit.png" />
+  </div>
+</div>
+<div class="tabs">
+  <div class="tab-title active" onclick="showTab('own')">Your Posts</div>
+  <div class="tab-title" onclick="showTab('followed')">Blogs You Follow</div>
+</div>
+
+
+
+ 
+    <div id="own-blogs" class="profile-grid active-tab"></div>
+    <div id="followed-blogs" class="reel-feed"></div>
+    
+  </div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
@@ -91,12 +327,95 @@
     auth.onAuthStateChanged(user => {
       if (user) {
         currentUserId = user.uid;
+        loadProfileData();
+        loadOwnBlogs();
         loadFollowedBlogs();
       } else {
         alert("You must be logged in to view this page.");
         window.location.href = "index.html";
       }
     });
+
+    function loadProfileData() {
+      db.ref("users/" + currentUserId).once("value").then(snapshot => {
+        const user = snapshot.val();
+        if (user) {
+          document.getElementById("username-display").innerText = user.username || "User";
+        }
+      });
+
+      // Load follower count
+      db.ref("users/" + currentUserId + "/followers").once("value").then(snapshot => {
+        const followers = snapshot.val() || {};
+        document.getElementById("followers-count").innerText = Object.keys(followers).length;
+
+        let list = "";
+        for (let id in followers) {
+          db.ref("users/" + id + "/username").once("value").then(nameSnap => {
+            list += `<p>${nameSnap.val() || "Unknown"}</p>`;
+            document.getElementById("followers-list").innerHTML = list;
+          });
+        }
+      });
+
+      // Load following count
+      db.ref("users/" + currentUserId + "/following").once("value").then(snapshot => {
+        const following = snapshot.val() || {};
+        document.getElementById("following-count").innerText = Object.keys(following).length;
+
+        let list = "";
+        for (let id in following) {
+          db.ref("users/" + id + "/username").once("value").then(nameSnap => {
+            list += `<p>${nameSnap.val() || "Unknown"}</p>`;
+            document.getElementById("following-list").innerHTML = list;
+          });
+        }
+      });
+    }
+
+    function toggleList(type) {
+      const listElement = document.getElementById(type + "-list");
+      listElement.style.display = listElement.style.display === "none" ? "block" : "none";
+    }
+function generateBlogCard(blog, key, authorName = "You", isOwn = false) {
+  return `
+    <div class="blog-card" data-id="${key}">
+      <h4 ${isOwn ? 'contenteditable="false"' : ""}>${blog.title}</h4>
+      <p ${isOwn ? 'contenteditable="false"' : ""}>${blog.content}</p>
+      <small>${authorName}</small>
+      <div class="blog-actions">
+        <button onclick="toggleLike('${key}')">❤️ <span id="like-count-${key}">${(blog.likes && Object.keys(blog.likes).length) || 0}</span></button>
+        <button onclick="toggleComments('${key}')">💬 Comments</button>
+        ${isOwn ? `
+          <button onclick="enableEdit('${key}')">✏️ Edit</button>
+          <button onclick="deleteBlog('${key}')">🗑️ Delete</button>
+        ` : ''}
+      </div>
+      <div class="comments" id="comments-${key}" style="display:none;">
+        <input type="text" id="comment-input-${key}" placeholder="Write a comment..." />
+        <button onclick="postComment('${key}')">Post</button>
+        <div id="comment-list-${key}"></div>
+      </div>
+    </div>
+  `;
+}
+
+   function loadOwnBlogs() {
+  db.ref("blogs").orderByChild("uid").equalTo(currentUserId).once("value").then(snapshot => {
+    const blogs = snapshot.val();
+    let output = "";
+
+    if (blogs) {
+      for (let key in blogs) {
+        output += generateBlogCard(blogs[key], key, "You", true);
+      }
+    } else {
+      output = "<p>You haven't posted any blogs yet.</p>";
+    }
+
+    document.getElementById("own-blogs").innerHTML = output;
+  });
+}
 
     function loadFollowedBlogs() {
       db.ref("users/" + currentUserId + "/following").once("value").then(snapshot => {
@@ -108,30 +427,32 @@
 
         const followedIds = Object.keys(following);
         let blogPromises = followedIds.map(uid => {
-          return db.ref("blogs").orderByChild("uid").equalTo(uid).once("value")
-            .then(blogSnap => {
-              return { uid, blogs: blogSnap.val() };
-            });
+          return Promise.all([
+            db.ref("blogs").orderByChild("uid").equalTo(uid).once("value"),
+            db.ref("users/" + uid + "/username").once("value")
+          ]).then(([blogSnap, usernameSnap]) => {
+            return {
+              uid,
+              username: usernameSnap.val() || "Unknown",
+              blogs: blogSnap.val()
+            };
+          });
         });
 
         Promise.all(blogPromises).then(results => {
           let output = "";
           results.forEach(result => {
             const blogs = result.blogs;
-            const authorId = result.uid;
-            if (blogs) {
-              for (let key in blogs) {
-                const blog = blogs[key];
-                output += `
-                  <div class='blog-box'>
-                    <h4>${blog.title}</h4>
-                    <p>${blog.content}</p>
-                    <small>Author ID: ${authorId}</small>
-                  </div>
-                `;
+            const authorName = result.username;
+           if (blogs) {
+  for (let key in blogs) {
+    output += generateBlogCard(blogs[key], key, authorName, false);
+  }
+}
+
               }
-            }
-          });
+            
+          );
 
           if (output === "") {
             output = "<p>No blogs from followed users yet.</p>";
@@ -141,6 +462,115 @@
         });
       });
     }
+
+    function showTab(tab) {
+      const own = document.getElementById("own-blogs");
+      const followed = document.getElementById("followed-blogs");
+      const tabs = document.querySelectorAll(".tab-title");
+
+      if (tab === 'own') {
+        own.classList.add("active-tab");
+        followed.classList.remove("active-tab");
+        tabs[0].classList.add("active");
+        tabs[1].classList.remove("active");
+      } else {
+        followed.classList.add("active-tab");
+        own.classList.remove("active-tab");
+        tabs[1].classList.add("active");
+        tabs[0].classList.remove("active");
+      }
+    }
+    function toggleLike(blogId) {
+  const likeRef = db.ref("blogs/" + blogId + "/likes/" + currentUserId);
+  likeRef.once("value").then(snapshot => {
+    if (snapshot.exists()) {
+      likeRef.remove(); // Unlike
+    } else {
+      likeRef.set(true); // Like
+    }
+  }).then(() => {
+    updateLikeCount(blogId);
+  });
+}
+
+function updateLikeCount(blogId) {
+  db.ref("blogs/" + blogId + "/likes").once("value").then(snapshot => {
+    const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+    document.getElementById("like-count-" + blogId).innerText = count;
+  });
+}
+
+function toggleComments(blogId) {
+  const commentDiv = document.getElementById("comments-" + blogId);
+  commentDiv.style.display = commentDiv.style.display === "none" ? "block" : "none";
+  loadComments(blogId);
+}
+
+function postComment(blogId) {
+  const commentInput = document.getElementById("comment-input-" + blogId);
+  const commentText = commentInput.value.trim();
+  if (commentText === "") return;
+  const commentRef = db.ref("blogs/" + blogId + "/comments").push();
+  commentRef.set({
+    uid: currentUserId,
+    text: commentText,
+    timestamp: Date.now()
+  });
+  commentInput.value = "";
+  loadComments(blogId);
+}
+
+function loadComments(blogId) {
+  db.ref("blogs/" + blogId + "/comments").once("value").then(snapshot => {
+    const commentList = document.getElementById("comment-list-" + blogId);
+    let output = "";
+    const comments = snapshot.val() || {};
+    const promises = Object.keys(comments).map(cid => {
+      const comment = comments[cid];
+      return db.ref("users/" + comment.uid + "/username").once("value").then(nameSnap => {
+        const name = nameSnap.val() || "User";
+        output += `<p><b>${name}</b>: ${comment.text}</p>`;
+      });
+    });
+    Promise.all(promises).then(() => {
+      commentList.innerHTML = output;
+    });
+  });
+}
+
+function enableEdit(blogId) {
+  const blogCard = document.querySelector(`.blog-card[data-id="${blogId}"]`);
+  const title = blogCard.querySelector("h4");
+  const content = blogCard.querySelector("p");
+
+  if (title.isContentEditable) {
+    db.ref("blogs/" + blogId).update({
+      title: title.innerText,
+      content: content.innerText
+    });
+    title.contentEditable = "false";
+    content.contentEditable = "false";
+  } else {
+    title.contentEditable = "true";
+    content.contentEditable = "true";
+    title.focus();
+  }
+}
+
+function deleteBlog(blogId) {
+  if (confirm("Are you sure you want to delete this blog?")) {
+    db.ref("blogs/" + blogId).remove().then(() => {
+      loadOwnBlogs();
+    });
+  }
+}
+    function goToChat() {
+      location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
+    }
+    function logout() {
+       location.href = `index.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
+      }
+
   </script>
 </body>
 </html>
