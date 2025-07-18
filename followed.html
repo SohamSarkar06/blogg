@@ -20,13 +20,16 @@
       align-items: center;
     }
     .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px 30px;
-      margin: 30px auto;
-      width: 1000px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-    }
+  background: rgba(0, 0, 0, 0.7);
+  padding: 40px 20px;
+  margin: 30px auto;
+  width: 90%;
+  max-width: 1000px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+}
+
 
     .title {
       text-align: center;
@@ -95,14 +98,17 @@
 
     
 
-    .blog-card {
-      background: #1f1f1f;
-      padding: 16px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s;
-      width: 70%;
-    }
+   .blog-card {
+  background: #1f1f1f;
+  padding: 16px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s;
+  width: 100%;
+  max-width: 700px;
+  box-sizing: border-box;
+}
+
 
     .blog-card:hover {
       transform: scale(1.02);
@@ -113,12 +119,12 @@
       color: #03dac5;
     }
 
-    .profile-grid.active-tab,
+   .profile-grid.active-tab,
 .reel-feed.active-tab {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  align-items: center; /* Center the blog cards horizontally */
+  align-items: center;
 }
 
 .blog-card p {
@@ -258,6 +264,25 @@
     height: 24px;
   }
 }
+    @media (max-width: 600px) {
+  .title {
+    font-size: 28px;
+  }
+
+  .blog-card h4 {
+    font-size: 18px;
+  }
+
+  .blog-card p {
+    font-size: 14px;
+  }
+
+  .profile-top {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -288,10 +313,10 @@
   <div class="action-circle" onclick="goToFollowedBlogs()" title="My Profile">
     <img src="https://img.icons8.com/fluency-systems-regular/48/user-male-circle--v1.png"/>
   </div>
-  <div class="action-circle" onclick="goToChat()" title="Chat">
+  <div class="action-circle" onclick="location.href='chat.html'" title="Chat">
     <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
   </div>
-  <div class="action-circle" onclick="logout()" title="Logout">
+  <div class="action-circle" onclick="location.href='index.html'" title="Logout">
     <img src="https://img.icons8.com/ios-filled/50/exit.png" />
   </div>
 </div>
@@ -564,12 +589,7 @@ function deleteBlog(blogId) {
     });
   }
 }
-    function goToChat() {
-      location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
-    }
-    function logout() {
-       location.href = `index.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
-      }
+    
 
   </script>
 </body>
