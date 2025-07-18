@@ -102,6 +102,87 @@
     .action-buttons .chat-button {
       margin-left: auto;
     }
+    .action-circle {
+      width: 70px;
+      height: 70px;
+      background-color: #03dac5;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .action-circle img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .action-circle:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 15px #03dac5, 0 0 30px rgba(3, 218, 197, 0.4);
+    }
+
+    .action-circle[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .bottom-action-bar {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 10px 20px;
+  border-radius: 40px;
+  z-index: 999;
+  box-shadow: 0 0 12px rgba(3, 218, 197, 0.4);
+}
+
+.bottom-action-bar .action-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-action-bar .action-circle img {
+  width: 28px;
+  height: 28px;
+}
+
+@media (max-width: 768px) {
+  .bottom-action-bar {
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  .bottom-action-bar .action-circle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .bottom-action-bar .action-circle img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -110,7 +191,22 @@
   <div class="container">
    <div class="title"><a href="dashboard.html" style="text-decoration: none; color: inherit;">
       <b><i>blogg</i></b>
-    </a></div><br
+    </a></div><br>
+    <div class="bottom-action-bar">
+  <div class="action-circle" title="Create Blog">
+    <img src="https://img.icons8.com/sf-black-filled/64/create-new.png" />
+  </div>
+  
+  <div class="action-circle" onclick="goToFollowedBlogs()" title="My Profile">
+    <img src="https://img.icons8.com/fluency-systems-regular/48/user-male-circle--v1.png"/>
+  </div>
+  <div class="action-circle" onclick="goToChat()" title="Chat">
+    <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
+  </div>
+  <div class="action-circle" onclick="logout()" title="Logout">
+    <img src="https://img.icons8.com/ios-filled/50/exit.png" />
+  </div>
+</div>
     <h2>Create a New Blog</h2>
     <input type="text" id="blog-title" placeholder="Blog Title">
     <textarea id="blog-content" placeholder="Write your blog..." rows="10"></textarea>
@@ -161,6 +257,16 @@
         window.location.href = "dashboard.html";
       });
     }
+     function goToChat() {
+      location.href = `chat.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
+    }
+   function goToFollowedBlogs() {
+    location.href = `followed.html`;
+     
+  }
+    function logout() {
+       location.href = `index.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
+      }
   </script>
 </body>
 </html>
