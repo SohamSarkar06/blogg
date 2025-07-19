@@ -365,26 +365,61 @@ a {
     height: 24px;
   }
 }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
 
+.stats {
+  display: flex;
+  gap: 20px;
+  margin: 10px 0;
+  color: white;
+}
+
+.stats span {
+  cursor: pointer;
+  background: #1a1a1a;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.stats span:hover {
+  background: #2a2a2a;
+}
+
+.user-list {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+#following-list {
+  display: none;
+}
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="title"><a href="dashboard.html"><b><i>blogg</i></b></a></div>
-
-    <div class="profile-header">
-  <div class="profile-top">
-    <h1 id="username-display" >Username</h1>
-    <div class="profile-stats">
-      
-      <span onclick="toggleList('following')">
-        Following: <span id="following-count">0</span>
-        <div id="following-list" class="user-list"></div>
-      </span>
-    </div>
-    <hr/>
+  <div class="title">
+    <a href="dashboard.html"><b><i>blogg</i></b></a>
   </div>
-</div>
+
+  <div class="header">
+    <h1 id="username">User Profile</h1>
+  </div>
+
+  <div class="stats">
+    <span id="following-tab">Following: <span id="following-count">0</span></span>
+  </div>
+
+  <div id="following-list" class="user-list"></div>
+    <hr/>
 
  <div class="bottom-action-bar">
     <div class="action-circle" onclick="location.href='dashboard.html'" title="Dashboard">
