@@ -466,7 +466,17 @@ a {
     const auth = firebase.auth();
     const db = firebase.database();
     let currentUserId = "";
-
+     auth.onAuthStateChanged(user => {
+      if (!user) return window.location = 'index.html';
+      currentUserId = user.uid;
+      // fetch username for comment and follow use
+      db.ref(`users/${currentUserId}/username`).once('value').then(s => {
+        currentUsername = s.val() || 'User';
+        loadProfileData();
+        loadOwnBlogs();
+        loadFollowedBlogs();
+      });
+    });
      firebase.auth().onAuthStateChanged(user => {
     if (user) {
       const displayName = user.displayName || user.email.split('@')[0]; // fallback to email username
