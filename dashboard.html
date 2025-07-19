@@ -479,15 +479,25 @@
   }
 
     function toggleLike(blogId) {
-      const likeRef = db.ref(`blogs/${blogId}/likes/${currentUserId}`);
-      likeRef.once("value").then((snapshot) => {
-        if (snapshot.exists()) {
-          likeRef.remove();
-        } else {
-          likeRef.set(true);
-        }
-      });
+  const likeRef = db.ref("blogs/" + blogId + "/likes/" + currentUserId);
+  likeRef.once("value").then(snapshot => {
+    if (snapshot.exists()) {
+      likeRef.remove(); // Unlike
+    } else {
+      likeRef.set(true); // Like
     }
+  }).then(() => {
+    updateLikeCount(blogId);
+  });
+}
+
+function updateLikeCount(blogId) {
+  db.ref("blogs/" + blogId + "/likes").once("value").then(snapshot => {
+    const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+    document.getElementById("like-count-" + blogId).innerText = count;
+  });
+}
+
 
     function deleteBlog(blogId) {
       if (confirm("Are you sure you want to delete this blog?")) {
