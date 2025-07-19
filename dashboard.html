@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -423,10 +424,10 @@
     <div class="blog-content">
       <h4>${blog.title}</h4>
       <p>${blog.content}</p>
-      <small>Author: ${authorName}</small>
+      <small>Author: <a href="user.html?uid=${blog.uid}&username=${authorName}" style="color: #03dac5; text-decoration: none;">${authorName}</a></small>
       <div class="button-row">
         <button onclick="toggleLike('${key}')">❤️ <span id="like-count-${key}">${(blog.likes && Object.keys(blog.likes).length) || 0}</span></button>
-        ${blog.uid === currentUserId ? `
+        ${blog.uid === currentUserId ? ` 
           <button class="delete-btn" onclick="deleteBlog('${key}')">Delete</button>
         ` : `
           <button class="follow-btn" onclick="toggleFollow('${blog.uid}')">
@@ -444,6 +445,7 @@
       ${commentsHTML || '<div class="comment">No comments yet.</div>'}
     </div>
   </div>`;
+
 
           allBlogs.push(blogHTML);
         }
