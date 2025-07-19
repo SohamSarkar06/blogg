@@ -366,12 +366,14 @@ a {
 
     <div class="profile-header">
   <div class="profile-top">
-    <h2 id="username-display" >Username</h2>
-   <div class="stats">
-      <span id="following-tab">Following: <span id="following-count">0</span>
+    <h2 id="username-display">Username</h2>
+    <div class="profile-stats">
+      
+      <span onclick="toggleList('following')">
+        Following: <span id="following-count">0</span>
+        <div id="following-list" class="user-list"></div>
+      </span>
     </div>
-    <div id="following-list" class="user-list"></div>
-    <hr/>
   </div>
 </div>
 
