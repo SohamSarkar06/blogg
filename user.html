@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -175,6 +176,54 @@
       font-weight: bold;
       color: #03dac5;
     }
+    .blog-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.blog-actions .action-circle {
+  width: 45px;
+  height: 45px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(3, 218, 197, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.blog-actions .action-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #03dac5;
+}
+
+.blog-actions .action-circle img {
+  width: 40px;
+  height: 40px;
+}
+
+.blog-actions .action-circle span {
+  position: absolute;
+  font-size: 5px;
+  font-weight: bold;
+  color: #0c0c0c;
+}
+.blog-actions[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(10, 10, 10, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
   </style>
 </head>
 <body>
@@ -235,6 +284,12 @@
       document.getElementById("username").innerText = user.username || "Unknown";
       currentUsername = user.username;
     });
+     const likedBlogs = {};
+
+  function isLiked(blogId) {
+    return likedBlogs[blogId];
+  }
+
 
     db.ref("users/" + uid + "/following").once("value").then(snapshot => {
       const following = snapshot.val() || {};
@@ -255,18 +310,31 @@
     });
 
     function toggleLike(blogId) {
-      const ref = db.ref(`blogs/${blogId}/likes/${uid}`);
-      ref.once("value").then(snap => {
-        snap.exists() ? ref.remove() : ref.set(true);
-      }).then(() => updateLikeCount(blogId));
-    }
-
+    const ref = db.ref(`blogs/${blogId}/likes/${uid}`);
+    ref.once("value").then(snap => {
+      if (snap.exists()) {
+        ref.remove();
+        likedBlogs[blogId] = false;
+      } else {
+        ref.set(true);
+        likedBlogs[blogId] = true;
+      }
+    }).then(() => updateLikeCount(blogId));
+  }
     function updateLikeCount(blogId) {
-      db.ref(`blogs/${blogId}/likes`).once("value").then(snap => {
-        const count = snap.exists() ? Object.keys(snap.val()).length : 0;
-        document.getElementById(`like-count-${blogId}`).innerText = count;
-      });
-    }
+    db.ref(`blogs/${blogId}/likes`).once("value").then(snap => {
+      const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+      document.getElementById(`like-count-${blogId}`).innerText = count;
+      const img = document.getElementById(`like-icon-${blogId}`);
+      if (snap.hasChild(uid)) {
+        likedBlogs[blogId] = true;
+        img.src = "https://img.icons8.com/ios-filled/50/love-circled.png";
+      } else {
+        likedBlogs[blogId] = false;
+        img.src = "https://img.icons8.com/ios/50/love-circled.png";
+      }
+    });
+  }
 
     function toggleComments(blogId) {
       const section = document.getElementById(`comments-${blogId}`);
@@ -296,16 +364,22 @@
     }
 
     db.ref("blogs").orderByChild("uid").equalTo(uid).once("value").then(snapshot => {
-      const blogs = snapshot.val() || {};
-      let output = "";
-      for (let key in blogs) {
-        const blog = blogs[key];
-        output += `<div class="blog">
+    const blogs = snapshot.val() || {};
+    let output = "";
+    for (let key in blogs) {
+      const blog = blogs[key];
+      output += `
+        <div class="blog">
           <h3>${blog.title}</h3>
           <p>${blog.content}</p>
           <div class="blog-actions">
-            <button onclick="toggleLike('${key}')">❤️ <span id="like-count-${key}">0</span></button>
-            <button onclick="toggleComments('${key}')">💬 Comments</button>
+            <div class="action-circle" onclick="toggleLike('${key}')" title="Like" >
+              <img id="like-icon-${key}" src="https://img.icons8.com/ios/50/love-circled.png" />
+              <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+            </div>
+            <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
+              <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
+            </div>
           </div>
           <div class="comments" id="comments-${key}">
             <div class="comment-section">
@@ -316,10 +390,14 @@
             <div class="comment-list" id="comment-list-${key}"></div>
           </div>
         </div>`;
-        updateLikeCount(key);
-      }
-      document.getElementById("blog-list").innerHTML = output || "<p>No blogs yet.</p>";
-    });
+    }
+    document.getElementById("blog-list").innerHTML = output || "<p>No blogs yet.</p>";
+
+    for (let key in blogs) {
+      updateLikeCount(key);
+    }
+  });
+
   </script>
 </body>
 </html>
