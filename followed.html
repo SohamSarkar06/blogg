@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -417,6 +418,56 @@ a {
   gap: 10px;
 }
 
+.blog-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.icon-btn {
+  width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.icon-btn img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.icon-btn[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+.like-count-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: bold;
+  color: rgb(12, 12, 12);
+  pointer-events: none;
+}
 
   </style>
 </head>
@@ -597,10 +648,26 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
           <p>${blog.content}</p>
           <small>${authorName}</small>
           <div class="blog-actions">
-            <button onclick="toggleLike('${key}')">❤️ <span id="like-count-${key}">${(blog.likes ? Object.keys(blog.likes).length : 0)}</span></button>
-            <button onclick="toggleComments('${key}')">💬 Comments</button>
-            ${isOwn ? `<button onclick="enableEdit('${key}')">✏️ Edit</button><button onclick="deleteBlog('${key}')">🗑️ Delete</button>` : ''}
-          </div>
+<div class="icon-btn" onclick="toggleLike('${key}')" title="Like" >
+  <img id="like-icon-${key}" src="${blog.likes && blog.likes[currentUserId] ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" />
+  <div class="like-count-overlay" id="like-count-${key}">
+    ${(blog.likes ? Object.keys(blog.likes).length : 0)}
+  </div>
+</div>
+
+  <div class="icon-btn" onclick="toggleComments('${key}')" title="Comment">
+    <img src="https://img.icons8.com/ios-glyphs/40/speech-bubble.png" />
+  </div>
+  ${isOwn ? `
+    <div class="icon-btn" onclick="enableEdit('${key}')" title="Edit">
+      <img src="https://img.icons8.com/material/40/create-new.png" />
+    </div>
+    <div class="icon-btn" onclick="deleteBlog('${key}')" title="Delete">
+      <img src="https://img.icons8.com/material-rounded/40/filled-trash.png" />
+    </div>
+  ` : ''}
+</div>
+
           <div class="comments" id="comments-${key}" style="display:none;">
             <div class="comment-section">
               <input type="text" id="comment-input-${key}" placeholder="Write a comment..." />
@@ -699,13 +766,16 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
   likeRef.once("value").then(snapshot => {
     if (snapshot.exists()) {
       likeRef.remove(); // Unlike
+      document.getElementById("like-icon-" + blogId).src = "https://img.icons8.com/ios/50/love-circled.png";
     } else {
       likeRef.set(true); // Like
+      document.getElementById("like-icon-" + blogId).src = "https://img.icons8.com/ios-filled/50/love-circled.png";
     }
   }).then(() => {
     updateLikeCount(blogId);
   });
 }
+
 
 function updateLikeCount(blogId) {
   db.ref("blogs/" + blogId + "/likes").once("value").then(snapshot => {
@@ -713,6 +783,7 @@ function updateLikeCount(blogId) {
     document.getElementById("like-count-" + blogId).innerText = count;
   });
 }
+
 
 function toggleComments(blogId) {
   const commentDiv = document.getElementById("comments-" + blogId);
