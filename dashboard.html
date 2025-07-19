@@ -425,9 +425,7 @@
       <p>${blog.content}</p>
       <small>Author: ${authorName}</small>
       <div class="button-row">
-        <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${key}')">
-          ❤️ ${hasLiked ? 'Unlike' : 'Like'} (${likeCount})
-        </button>
+        <button onclick="toggleLike('${key}')">❤️ <span id="like-count-${key}">${(blog.likes && Object.keys(blog.likes).length) || 0}</span></button>
         ${blog.uid === currentUserId ? `
           <button class="delete-btn" onclick="deleteBlog('${key}')">Delete</button>
         ` : `
