@@ -468,28 +468,40 @@
       });
     }
   function toggleFollow(targetUserId) {
-    const followRef = db.ref(`users/${currentUserId}/following/${targetUserId}`);
-    followRef.once("value").then(snapshot => {
-      if (snapshot.exists()) {
-        followRef.remove();
-      } else {
-        followRef.set(true);
-      }
-    });
-  }
+  const followRef = db.ref(`users/${currentUserId}/following/${targetUserId}`);
+  followRef.once("value").then(snapshot => {
+    const buttons = document.querySelectorAll(`button[onclick="toggleFollow('${targetUserId}')"]`);
+    if (snapshot.exists()) {
+      followRef.remove().then(() => {
+        buttons.forEach(btn => btn.innerText = 'Follow');
+      });
+    } else {
+      followRef.set(true).then(() => {
+        buttons.forEach(btn => btn.innerText = 'Unfollow');
+      });
+    }
+  });
+}
 
-    function toggleLike(blogId) {
+  function toggleLike(blogId) {
   const likeRef = db.ref("blogs/" + blogId + "/likes/" + currentUserId);
   likeRef.once("value").then(snapshot => {
     if (snapshot.exists()) {
       likeRef.remove(); // Unlike
+      // Decrease like count in DOM
+      const likeCountSpan = document.getElementById("like-count-" + blogId);
+      let count = parseInt(likeCountSpan.innerText);
+      likeCountSpan.innerText = Math.max(0, count - 1);
     } else {
       likeRef.set(true); // Like
+      // Increase like count in DOM
+      const likeCountSpan = document.getElementById("like-count-" + blogId);
+      let count = parseInt(likeCountSpan.innerText);
+      likeCountSpan.innerText = count + 1;
     }
-  }).then(() => {
-    updateLikeCount(blogId);
   });
 }
+
 
 function updateLikeCount(blogId) {
   db.ref("blogs/" + blogId + "/likes").once("value").then(snapshot => {
