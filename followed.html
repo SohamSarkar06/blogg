@@ -44,42 +44,22 @@ body {
       
     }
 
-.profile-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.profile-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  text-align: center;
-}
-
-.profile-header h2 {
-  margin: 0;
-  color: #03dac5;
-}
-
-.profile-stats {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.profile-stats span {
-  position: relative;
-  cursor: pointer;
-  color:  #53bd96;
-  text-decoration: none;
-  display: inline-block;
-}
-
+.header { display: flex; justify-content: space-between; align-items: center; }
+    .stats { display: flex; gap: 20px; margin: 10px 0; }
+    .stats span {
+      cursor: pointer;
+      background: #1a1a1a;
+      padding: 8px 12px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .stats span:hover { background: #2a2a2a; }
+    .user-list {
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
 .tabs {
   display: flex;
   justify-content: center;
@@ -357,6 +337,9 @@ a {
     height: 24px;
   }
 }
+    #following-list {
+  display: none;
+}
 
   </style>
 </head>
@@ -364,15 +347,12 @@ a {
   <div class="container">
     <div class="title"><a href="dashboard.html"><b><i>blogg</i></b></a></div>
 
-    <div class="profile-header">
-  <div class="profile-top">
-    <h2 id="username-display">Username</h2>
-    <div class="profile-stats">
-      
-      <span onclick="toggleList('following')">
-        Following: <span id="following-count">0</span>
-        <div id="following-list" class="user-list"></div>
-      </span>
+  
+    <<div class="header"><h1 id="username">User Profile</h1></div>
+    <div class="stats">
+      <span id="following-tab">Following: <span id="following-count">0</span></span>
+    </div>
+      <div id="following-list" class="user-list"></div>
     </div>
   </div>
 </div>
