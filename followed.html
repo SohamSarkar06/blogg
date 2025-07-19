@@ -13,7 +13,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: url('https://i.postimg.cc/9M9Gq2rr/8f6d9e5c88ee5183b23758fd44c6de7b.jpg') no-repeat center center fixed;
+      background: url('https://i.postimg.cc/sX2tdnwS/d5add47e7e236bd2bacf2a34323e7c6a.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
       padding: 20px;
@@ -25,9 +25,14 @@
       background: rgba(0, 0, 0, 0.7);
       padding: 40px 30px;
       margin: 30px auto;
-      width: 1000px;
+     
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      
+  max-width: 1000px;
+  width: 100%;
+  box-sizing: border-box;
+
     }
 
     .title {
@@ -95,7 +100,7 @@
       display: none;
     }
 
-    
+   
 
     .blog-card {
       background: #1f1f1f;
@@ -103,7 +108,9 @@
       border-radius: 15px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       transition: transform 0.3s;
-      width: 70%;
+       max-width: 700px;
+  width: 100%;
+       box-sizing: border-box;
     }
 
     .blog-card:hover {
@@ -244,33 +251,53 @@
   height: 28px;
 }
 @media (max-width: 768px) {
- 
+  .profile-top {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
 
-  .title {
-    font-size: 1.5rem;
+  .profile-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tabs {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tab-title {
+    font-size: 1rem;
   }
 
   .profile-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .blog-card h4 {
     font-size: 1.2rem;
   }
 
-  .blog-card {
-    width: 95%;
+  .blog-card p {
+    font-size: 0.95rem;
   }
 
-  .bottom-action-bar {
-    gap: 10px;
-    padding: 8px 12px;
+  .user-list {
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 90%;
+  }
+}
+      .action-circle {
+    width: 40px;
+    height: 40px;
   }
 
-  .bottom-action-bar .action-circle {
-    width: 45px;
-    height: 45px;
-  }
-
-  .bottom-action-bar .action-circle img {
-    width: 20px;
-    height: 20px;
+  .action-circle img {
+    width: 22px;
+    height: 22px;
   }
 
   .tab-title {
