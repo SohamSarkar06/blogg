@@ -477,12 +477,13 @@ a {
         loadFollowedBlogs();
       });
     });
-     firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      const displayName = user.displayName || user.email.split('@')[0]; // fallback to email username
-      document.getElementById("username").innerText = displayName;
+      // Show displayName if set, else fallback to email prefix
+      const name = user.displayName || user.email.split('@')[0];
+      document.getElementById("username").innerText = name;
     } else {
-      // Optional: redirect to login if not logged in
+      // Redirect if no user is logged in
       window.location.href = "login.html";
     }
   });
