@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,6 +67,7 @@
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      
     }
 
     button:hover {
@@ -214,6 +216,65 @@
   height: 28px;
 }
 
+.like-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.like-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #da69d3;
+}
+
+.like-count {
+  position: absolute;
+  
+  bottom: 15px;
+  
+  background-color: rgba(135, 175, 193,0);
+  color: rgb(8, 8, 8);
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.follow-btn{
+  float :right;
+}
+.delete-btn{
+float :right;
+width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+}
+.delete-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #da69d3;
+}
+
 @media (max-width: 768px) {
   .bottom-action-bar {
     gap: 10px;
@@ -229,7 +290,21 @@
     width: 24px;
     height: 24px;
   }
+  .like-circle {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
 }
+
+.like-count {
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+}
+
+}
+
+
 
   </style>
 </head>
@@ -426,9 +501,13 @@
       <p>${blog.content}</p>
       <small>Author: <a href="user.html?uid=${blog.uid}&username=${authorName}" style="color: #03dac5; text-decoration: none;">${authorName}</a></small>
       <div class="button-row">
-        <button onclick="toggleLike('${key}')">❤️ <span id="like-count-${key}">${(blog.likes && Object.keys(blog.likes).length) || 0}</span></button>
+        <div class="like-circle" onclick="toggleLike('${key}')" id="like-btn-${key}" title="Like">
+  <img src="${hasLiked ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" class="like-icon"/>
+  <span class="like-count" id="like-count-${key}">${likeCount}</span>
+</div>
+
         ${blog.uid === currentUserId ? ` 
-          <button class="delete-btn" onclick="deleteBlog('${key}')">Delete</button>
+          <div class="delete-btn" onclick="deleteBlog('${key}')" title="delete"><img src="https://img.icons8.com/material-rounded/40/filled-trash.png" /></div>
         ` : `
           <button class="follow-btn" onclick="toggleFollow('${blog.uid}')">
             ${isFollowing ? 'Unfollow' : 'Follow'}
@@ -488,22 +567,23 @@
 
   function toggleLike(blogId) {
   const likeRef = db.ref("blogs/" + blogId + "/likes/" + currentUserId);
+  const likeIcon = document.querySelector(`#like-btn-${blogId} .like-icon`);
+  const likeCountSpan = document.getElementById("like-count-" + blogId);
+
   likeRef.once("value").then(snapshot => {
+    let count = parseInt(likeCountSpan.innerText);
     if (snapshot.exists()) {
       likeRef.remove(); // Unlike
-      // Decrease like count in DOM
-      const likeCountSpan = document.getElementById("like-count-" + blogId);
-      let count = parseInt(likeCountSpan.innerText);
+      likeIcon.src = "https://img.icons8.com/ios/50/love-circled.png";
       likeCountSpan.innerText = Math.max(0, count - 1);
     } else {
       likeRef.set(true); // Like
-      // Increase like count in DOM
-      const likeCountSpan = document.getElementById("like-count-" + blogId);
-      let count = parseInt(likeCountSpan.innerText);
+      likeIcon.src = "https://img.icons8.com/ios-filled/50/love-circled.png";
       likeCountSpan.innerText = count + 1;
     }
   });
 }
+
 
 
 function updateLikeCount(blogId) {
