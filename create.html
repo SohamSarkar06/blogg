@@ -197,13 +197,13 @@
     <img src="https://img.icons8.com/fluency-systems-regular/48/content.png" />
   </div>
   
-  <div class="action-circle" onclick="goToFollowedBlogs()" title="My Profile">
+  <div class="action-circle" onclick="location.href='followed.html'" title="My Profile">
     <img src="https://img.icons8.com/fluency-systems-regular/48/user-male-circle--v1.png"/>
   </div>
   <div class="action-circle" onclick="location.href='chat.html'" title="Chat">
     <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
   </div>
-  <div class="action-circle" onclick="logout()" title="Logout">
+  <div class="action-circle" onclick="location.href='index.html'" title="Logout">
     <img src="https://img.icons8.com/ios-filled/50/exit.png" />
   </div>
 </div>
@@ -211,7 +211,7 @@
     <input type="text" id="blog-title" placeholder="Blog Title">
     <textarea id="blog-content" placeholder="Write your blog..." rows="10"></textarea>
     <button onclick="postBlog()">Post Blog</button>
-    <button onclick="location.href='dashboard.html'">Back to Dashboard</button>
+    
   </div>
 
   <script>
