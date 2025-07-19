@@ -417,13 +417,16 @@ function generateBlogCard(blog, key, authorName = "You", isOwn = false) {
           <button onclick="deleteBlog('${key}')">🗑️ Delete</button>
         ` : ''}
       </div>
-      <div class="comments" id="comments-${key}" style="display:none;">
-        <input type="text" id="comment-input-${key}" placeholder="Write a comment..." />
+      <div class="comment-section">
+        <input type="text" id="comment-input-${key}" placeholder="Add a comment..." />
         <button onclick="postComment('${key}')">Post</button>
-        <div id="comment-list-${key}"></div>
       </div>
     </div>
-  `;
+
+    <div class="comment-list">
+      ${commentsHTML || '<div class="comment">No comments yet.</div>'}
+    </div>
+  </div>`;
 }
 
    function loadOwnBlogs() {
@@ -526,11 +529,21 @@ function updateLikeCount(blogId) {
   });
 }
 
-function toggleComments(blogId) {
-  const commentDiv = document.getElementById("comments-" + blogId);
-  commentDiv.style.display = commentDiv.style.display === "none" ? "block" : "none";
-  loadComments(blogId);
-}
+   function postComment(blogId) {
+      const commentInput = document.getElementById(comment-input-${blogId});
+      const commentText = commentInput.value.trim();
+      if (!commentText) return;
+
+      const commentRef = db.ref(blogs/${blogId}/comments).push();
+      commentRef.set({
+        uid: currentUserId,
+        username: currentUsername,
+        text: commentText,
+        timestamp: Date.now()
+      }).then(() => {
+        commentInput.value = '';
+      });
+    }
 
 function postComment(blogId) {
   const commentInput = document.getElementById("comment-input-" + blogId);
