@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,13 +33,16 @@ body {
   box-sizing: border-box;
 }
 
-.title {
-  text-align: center;
-  font-size: 36px;
-  color: #03dac5;
-  margin: 20px 0;
-  word-wrap: break-word;
-}
+    .title {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #03dac5;
+      padding-bottom: 20px;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 10px;
+      text-shadow: 2px 2px 4px #ffffff;
+      
+    }
 
 .profile-header {
   display: flex;
@@ -364,10 +368,7 @@ a {
   <div class="profile-top">
     <h2 id="username-display">Username</h2>
     <div class="profile-stats">
-      <span onclick="toggleList('followers')" >
-        Followers: <span id="followers-count">0</span>
-        <div id="followers-list" class="user-list"></div>
-      </span>
+      
       <span onclick="toggleList('following')">
         Following: <span id="following-count">0</span>
         <div id="following-list" class="user-list"></div>
@@ -421,63 +422,105 @@ a {
     const db = firebase.database();
     let currentUserId = "";
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        currentUserId = user.uid;
-        // fetch and store current username for comments
-        db.ref(`users/${currentUserId}/username`).once('value').then(snap => {
-          currentUsername = snap.val() || 'User';
-          loadProfileData();
-          loadOwnBlogs();
-          loadFollowedBlogs();
-        });
-      } else {
-        window.location.href = 'index.html';
-      }
+     auth.onAuthStateChanged(user => {
+      if (!user) return window.location = 'index.html';
+      currentUserId = user.uid;
+      // fetch username for comment and follow use
+      db.ref(`users/${currentUserId}/username`).once('value').then(s => {
+        currentUsername = s.val() || 'User';
+        loadProfileData();
+        loadOwnBlogs();
+        loadFollowedBlogs();
+      });
     });
+function loadProfileData() {
+  const uRef = db.ref(`users/${currentUserId}`);
+  uRef.once('value').then(snap => {
+    const user = snap.val() || {};
+    document.getElementById('username-display').innerText = user.username || 'User';
+  });
 
-
-    function loadProfileData() {
-      db.ref("users/" + currentUserId).once("value").then(snapshot => {
-        const user = snapshot.val();
-        if (user) {
-          document.getElementById("username-display").innerText = user.username || "User";
-        }
+  // followers
+  db.ref(`users/${currentUserId}/followers`).once('value').then(snap => {
+    const followers = snap.val() || {};
+    document.getElementById('followers-count').innerText = Object.keys(followers).length;
+    let html = '';
+    Object.keys(followers).forEach(uid => {
+      db.ref(`users/${uid}/username`).once('value').then(ns => {
+        const name = ns.val() || 'User';
+        html += `<p><a href="user.html?uid=${uid}">${name}</a></p>`; // ⬅️ clickable link
+        document.getElementById('followers-list').innerHTML = html;
       });
+    });
+  });
 
-      // Load follower count
-      db.ref("users/" + currentUserId + "/followers").once("value").then(snapshot => {
-        const followers = snapshot.val() || {};
-        document.getElementById("followers-count").innerText = Object.keys(followers).length;
-
-        let list = "";
-        for (let id in followers) {
-          db.ref("users/" + id + "/username").once("value").then(nameSnap => {
-            list += `<p>${nameSnap.val() || "Unknown"}</p>`;
-            document.getElementById("followers-list").innerHTML = list;
-          });
-        }
+  // following
+  db.ref(`users/${currentUserId}/following`).once('value').then(snap => {
+    const following = snap.val() || {};
+    document.getElementById('following-count').innerText = Object.keys(following).length;
+    let html = '';
+    Object.keys(following).forEach(uid => {
+      db.ref(`users/${uid}/username`).once('value').then(ns => {
+        const name = ns.val() || 'User';
+        html += `<p><a href="user.html?uid=${uid}">${name}</a></p>`; // ⬅️ clickable link
+        document.getElementById('following-list').innerHTML = html;
       });
+    });
+  });
+}
 
-      // Load following count
-      db.ref("users/" + currentUserId + "/following").once("value").then(snapshot => {
-        const following = snapshot.val() || {};
-        document.getElementById("following-count").innerText = Object.keys(following).length;
 
-        let list = "";
-        for (let id in following) {
-          db.ref("users/" + id + "/username").once("value").then(nameSnap => {
-            list += `<p>${nameSnap.val() || "Unknown"}</p>`;
-            document.getElementById("following-list").innerHTML = list;
+     function initProfileListeners() {
+      // Real-time updates for followers
+      db.ref(`users/${currentUserId}/followers`).on('value', snap => {
+        const followers = snap.val() || {};
+        document.getElementById('followers-count').innerText = Object.keys(followers).length;
+        let html = '';
+        Object.keys(followers).forEach(uid => {
+          html += `<p id="follower-${uid}">Loading...</p>`;
+          db.ref(`users/${uid}/username`).once('value').then(ns => {
+            const p = document.getElementById(`follower-${uid}`);
+            if (p) p.innerText = ns.val() || 'User';
           });
-        }
+        });
+        document.getElementById('followers-list').innerHTML = html;
+      });
+      // Real-time updates for following
+      db.ref(`users/${currentUserId}/following`).on('value', snap => {
+        const following = snap.val() || {};
+        document.getElementById('following-count').innerText = Object.keys(following).length;
+        let html = '';
+        Object.keys(following).forEach(uid => {
+          html += `<p id="following-${uid}">Loading...</p>`;
+          db.ref(`users/${uid}/username`).once('value').then(ns => {
+            const p = document.getElementById(`following-${uid}`);
+            if (p) p.innerText = ns.val() || 'User';
+          });
+        });
+        document.getElementById('following-list').innerHTML = html;
       });
     }
 
     function toggleList(type) {
-      const listElement = document.getElementById(type + "-list");
-      listElement.style.display = listElement.style.display === "none" ? "block" : "none";
+      const listEl = document.getElementById(`${type}-list`);
+      listEl.style.display = listEl.style.display === 'block' ? 'none' : 'block';
     }
+
+    function toggleFollow(targetUserId) {
+      const followRef = db.ref(`users/${currentUserId}/following/${targetUserId}`);
+      const followerRef = db.ref(`users/${targetUserId}/followers/${currentUserId}`);
+      followRef.once('value').then(snap => {
+        if (snap.exists()) {
+          followRef.remove();
+          followerRef.remove();
+        } else {
+          followRef.set(true);
+          followerRef.set(true);
+        }
+      });
+    }
+
+    
 function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
       const comments = blog.comments || {};
       const commentsHTML = Object.values(comments).map(c =>
