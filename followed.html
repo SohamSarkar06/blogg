@@ -13,7 +13,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: url('https://i.postimg.cc/wxhbpLDf/2f20a480a2170030a0568f8e78d5b94a.jpg') no-repeat center center fixed;
+  background: url('https://i.postimg.cc/sX2tdnwS/d5add47e7e236bd2bacf2a34323e7c6a.jpg') no-repeat center center fixed;
   background-size: cover;
   color: #fff;
   padding: 20px;
@@ -49,7 +49,6 @@ body {
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
-  float:left;
 }
 
 .profile-top {
@@ -59,13 +58,11 @@ body {
   gap: 30px;
   flex-wrap: wrap;
   text-align: center;
-  float:left;
 }
 
-.profile-header h1 {
+.profile-header h2 {
   margin: 0;
   color: #03dac5;
-  float:left;
 }
 
 .profile-stats {
@@ -81,11 +78,6 @@ body {
   color:  #53bd96;
   text-decoration: none;
   display: inline-block;
-   display: flex;
-  justify-content: flex-start; 
-  flex-direction: column;      
-  align-items: flex-start;     
-  gap: 10px;
 }
 
 .tabs {
@@ -365,61 +357,23 @@ a {
     height: 24px;
   }
 }
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-}
 
-.stats {
-  display: flex;
-  gap: 20px;
-  margin: 10px 0;
-  color: white;
-}
-
-.stats span {
-  cursor: pointer;
-  background: #1a1a1a;
-  padding: 8px 12px;
-  border-radius: 20px;
-  transition: background 0.2s;
-}
-
-.stats span:hover {
-  background: #2a2a2a;
-}
-
-.user-list {
-  background: #1a1a1a;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  color: white;
-}
-
-#following-list {
-  display: none;
-}
   </style>
 </head>
 <body>
   <div class="container">
-  <div class="title">
-    <a href="dashboard.html"><b><i>blogg</i></b></a>
-  </div>
+    <div class="title"><a href="dashboard.html"><b><i>blogg</i></b></a></div>
 
-  <div class="header">
-    <h1 id="username">User Profile</h1>
-  </div>
-
-  <div class="stats">
-    <span id="following-tab">Following: <span id="following-count">0</span></span>
-  </div>
-
-  <div id="following-list" class="user-list"></div>
+    <div class="profile-header">
+  <div class="profile-top">
+    <h2 id="username-display" >Username</h2>
+   <div class="stats">
+      <span id="following-tab">Following: <span id="following-count">0</span>
+    </div>
+    <div id="following-list" class="user-list"></div>
     <hr/>
+  </div>
+</div>
 
  <div class="bottom-action-bar">
     <div class="action-circle" onclick="location.href='dashboard.html'" title="Dashboard">
@@ -437,7 +391,6 @@ a {
     <img src="https://img.icons8.com/ios-filled/50/exit.png" />
   </div>
 </div>
-    
 <div class="tabs">
   <div class="tab-title active" onclick="showTab('own')">Your Posts</div>
   <div class="tab-title" onclick="showTab('followed')">Blogs You Follow</div>
@@ -466,6 +419,7 @@ a {
     const auth = firebase.auth();
     const db = firebase.database();
     let currentUserId = "";
+
      auth.onAuthStateChanged(user => {
       if (!user) return window.location = 'index.html';
       currentUserId = user.uid;
@@ -477,16 +431,6 @@ a {
         loadFollowedBlogs();
       });
     });
-    firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      // Show displayName if set, else fallback to email prefix
-      const name = user.displayName || user.email.split('@')[0];
-      document.getElementById("username").innerText = name;
-    } else {
-      // Redirect if no user is logged in
-      window.location.href = "login.html";
-    }
-  });
 function loadProfileData() {
   const uRef = db.ref(`users/${currentUserId}`);
   uRef.once('value').then(snap => {
