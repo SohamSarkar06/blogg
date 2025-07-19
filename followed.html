@@ -70,7 +70,7 @@ body {
 .profile-stats span {
   position: relative;
   cursor: pointer;
-  color: #ffde59;
+  color: #568487;
   text-decoration: none;
   display: inline-block;
 }
@@ -80,7 +80,9 @@ body {
   justify-content: center;
   gap: 40px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  
+  flex-direction: row ;
+  flex-wrap: nowrap ;
 }
 
 .tab-title {
@@ -88,6 +90,8 @@ body {
   color: #888;
   cursor: pointer;
   transition: color 0.3s;
+   flex: 1;
+  text-align: center;
 }
 
 .tab-title.active {
@@ -299,7 +303,7 @@ a {
   <div class="profile-top">
     <h2 id="username-display">Username</h2>
     <div class="profile-stats">
-      <span onclick="toggleList('followers')" floa>
+      <span onclick="toggleList('followers')" >
         Followers: <span id="followers-count">0</span>
         <div id="followers-list" class="user-list"></div>
       </span>
