@@ -308,11 +308,7 @@ a {
   text-align: left;
 }
 
-#username-display {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffffff;
-}
+
 
 @media (max-width: 768px) {
   .container {
@@ -372,7 +368,7 @@ a {
 #username-display {
   font-size: 32px;
   font-weight: bold;
-  color: #ffffff;
+  color: #53bd96;
   text-align: left;
   margin: 0;
   
@@ -475,3 +471,38 @@ a {
 .blog-actions-right{
   float: right;
 }
+.share-btn {
+  position: absolute;
+  width: 30px;
+      height: 30px;
+  top: 10px;
+  right: 10px;
+  background-color: #03dac5;
+  border: none;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  z-index: 10;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.share-btn:hover {
+   transform: scale(1.08);
+  background-color: #45a049;
+}
+.share-btn[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    
+
