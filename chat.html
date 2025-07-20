@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -228,7 +229,8 @@
       <div class="chat-area" id="chatArea">
         <div class="chat-header">
           <button class="back-btn" onclick="goBack()">←</button>
-          <span id="chatHeaderName">Chat</span>
+          <span id="chatHeaderName" style="cursor: pointer; text-decoration: none;"></span>
+
         </div>
         <div id="chatBox" class="chat-box"></div>
         <div class="input-area">
@@ -421,9 +423,16 @@
       }
 
       function openChatView(username) {
-        document.getElementById("chatHeaderName").textContent = username;
-        document.getElementById("chatArea").classList.add("active");
-      }
+  const chatHeader = document.getElementById("chatHeaderName");
+  chatHeader.textContent = username;
+  chatHeader.onclick = () => {
+    if (selectedUserId) {
+      window.location.href = `user.html?uid=${selectedUserId}`;
+    }
+  };
+  document.getElementById("chatArea").classList.add("active");
+}
+
 
       function goBack() {
         document.getElementById("chatArea").classList.remove("active");
