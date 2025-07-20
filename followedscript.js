@@ -11,7 +11,7 @@ const firebaseConfig = {
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-    let currentUserId = "";
+    
 
      auth.onAuthStateChanged(user => {
       if (!user) return window.location = 'index.html';
@@ -119,11 +119,12 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
       ).join('') || `<div class="comment">No comments yet.</div>`;
 
       return `
-        <div class="blog-card" data-id="${key}">
+        <div class="blog-card" data-id="${key}" style="position: relative;">
           <h4>${blog.title}</h4>
           <p>${blog.content}</p>
           <small>${authorName}</small>
   <div class="blog-actions">
+
      <div class="blog-actions-right">
     <div class="icon-btn" onclick="toggleLike('${key}')" title="Like" >
       <img id="like-icon-${key}" src="${blog.likes && blog.likes[currentUserId] ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" />
@@ -131,7 +132,7 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
         ${(blog.likes ? Object.keys(blog.likes).length : 0)}
       </div>
     </div>
-
+      <div class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/material-sharp/24/share.png"/></div>
     <div class="icon-btn" onclick="toggleComments('${key}')" title="Comment">
       <img src="https://img.icons8.com/ios-glyphs/40/speech-bubble.png" />
     </div>
@@ -154,7 +155,6 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
               <input type="text" id="comment-input-${key}" placeholder="Write a comment..." />
               <button onclick="postComment('${key}')">Post</button>
             </div>
-            <hr/>
             <div class="comment-list" id="comment-list-${key}">
               ${commentsHTML}
             </div>
@@ -326,3 +326,65 @@ function deleteBlog(blogId) {
     });
   }
 }
+
+function openShareModal(blogId) {
+  blogToShareId = blogId;
+  document.getElementById("shareModal").style.display = "block";
+  loadUsersForSharing();
+}
+
+function closeShareModal() {
+  document.getElementById("shareModal").style.display = "none";
+  document.getElementById("shareUserList").innerHTML = ""; // Clear previous list
+}
+
+let currentUserId = "";
+let currentUsername = "";
+let blogToShareId = "";
+
+function loadUsersForSharing() {
+  const shareUserList = document.getElementById("shareUserList");
+  db.ref("users").once("value", (snapshot) => {
+    shareUserList.innerHTML = "";
+    snapshot.forEach((userSnap) => {
+      const userId = userSnap.key;
+      const userData = userSnap.val();
+      if (userId !== currentUserId) {
+        const userDiv = document.createElement("div");
+        userDiv.style.padding = "10px";
+        userDiv.style.borderBottom = "1px solid #555";
+        userDiv.style.cursor = "pointer";
+        userDiv.innerHTML = `
+          <strong>${userData.username || "Unnamed User"}</strong>
+          <button style="float:right; padding:4px 8px; border:none; border-radius:5px; background:#03dac5; color:black; cursor:pointer;"
+            onclick="shareBlogWithUser('${userId}', '${userData.username}')">Send</button>
+        `;
+        shareUserList.appendChild(userDiv);
+      }
+    });
+  });
+}
+
+
+function shareBlogWithUser(receiverId, receiverUsername) {
+  const timestamp = new Date().getTime();
+  const chatId = currentUserId < receiverId ? currentUserId + receiverId : receiverId + currentUserId;
+
+  db.ref("blogs/" + blogToShareId).once("value", (snap) => {
+    if (snap.exists()) {
+      const blog = snap.val();
+      const messageData = {
+        type: "blog",
+        blogId: blogToShareId,
+        senderId: currentUserId,
+        senderUsername: currentUsername,
+        timestamp: timestamp
+      };
+      db.ref(`chats/${chatId}/messages`).push(messageData).then(() => {
+        alert(`Blog shared with ${receiverUsername}`);
+        closeShareModal();
+      });
+    }
+  });
+}
+
