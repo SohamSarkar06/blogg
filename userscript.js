@@ -103,11 +103,11 @@
       });
     }
 
-    db.ref("blogs").orderByChild("uid").equalTo(uid).once("value").then(snapshot => {
-    const blogs = snapshot.val() || {};
-    let output = "";
-    for (let key in blogs) {
-      const blog = blogs[key];
+   db.ref(`blogs/${uid}`).once("value").then(snapshot => {
+  const blogs = snapshot.val() || {};
+  let output = "";
+  for (let key in blogs) {
+    const blog = blogs[key];
      output += `
   <div class="blog">
     <h3>${blog.title}</h3>
@@ -133,7 +133,5 @@
 )
     document.getElementById("blog-list").innerHTML = output || "<p>No blogs yet.</p>";
 
-    for (let key in blogs) {
-      updateLikeCount(key);
-    }
+   
   });
