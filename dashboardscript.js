@@ -127,26 +127,27 @@
             : "";
 
          const blogHTML = `
-  <div class='blog-box'>
-    <div class="blog-content">
-      <h4>${blog.title}</h4>
-      <p>${blog.content}</p>
-      <small>Author: <a href="user.html?uid=${blog.uid}&username=${authorName}" style="color: #03dac5; text-decoration: none;">${authorName}</a></small>
-      <div class="button-row">
-        <div class="like-circle" onclick="toggleLike('${key}')" id="like-btn-${key}" title="Like">
-  <img src="${hasLiked ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" class="like-icon"/>
-                <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">${likeCount}</span>
+<div class='blog-box' style="position: relative;">
+  <div class="blog-content">
+    <h4>${blog.title}</h4>
+    <p>${blog.content}</p>
+    <small>Author: <a href="user.html?uid=${blog.uid}&username=${authorName}" style="color: #03dac5; text-decoration: none;">${authorName}</a></small>
+    <div class="button-row">
+      <div class="like-circle" onclick="toggleLike('${key}')" id="like-btn-${key}" title="Like">
+        <img src="${hasLiked ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" class="like-icon"/>
+        <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">${likeCount}</span>
+      </div>
 
-</div>
-
-        ${blog.uid === currentUserId ? ` 
+ ${blog.uid === currentUserId ? ` 
           <div class="delete-btn" onclick="deleteBlog('${key}')" title="Delete"><img src="https://img.icons8.com/material-rounded/40/filled-trash.png" /></div>
         ` : `
           <button class="follow-btn" onclick="toggleFollow('${blog.uid}')">
             ${isFollowing ? 'Unfollow' : 'Follow'}
           </button>
         `}
-      </div>
+      
+      <button class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/material-sharp/24/share.png"/></button>
+    </div>
       <hr/>
       <div class="comment-section">
         <input type="text" id="comment-input-${key}" placeholder="Add a comment..." />
@@ -217,7 +218,62 @@
   });
 }
 
+function shareBlog(blogId, title, content) {
+  const encodedTitle = encodeURIComponent(title);
+  const encodedContent = encodeURIComponent(content);
+  const shareUrl = `chat.html?shareBlogId=${blogId}&title=${encodedTitle}&content=${encodedContent}`;
+  window.location.href = shareUrl;
+}
+const urlParams = new URLSearchParams(window.location.search);
+const blogId = urlParams.get("shareBlogId");
+const blogTitle = urlParams.get("title");
+const blogContent = urlParams.get("content");
 
+let blogToShare = null;
+
+if (blogId && blogTitle && blogContent) {
+  blogToShare = {
+    blogId,
+    title: decodeURIComponent(blogTitle),
+    content: decodeURIComponent(blogContent)
+  };
+
+  // Optional: Display preview
+  const sharePreview = document.createElement('div');
+  sharePreview.innerHTML = `
+    <div style="background:#222; padding:10px; border-radius:8px; margin:10px 0;">
+      <strong>Sharing Blog:</strong><br>
+      <b>${blogToShare.title}</b><br>
+      <small>${blogToShare.content.substring(0, 100)}...</small>
+    </div>
+  `;
+  document.body.prepend(sharePreview);
+}
+function sendMessage(receiverUid, messageText) {
+  const chatId = getChatId(currentUser.uid, receiverUid); // Your existing logic
+  const chatRef = db.ref(`chats/${chatId}`).push();
+  chatRef.set({
+    sender: currentUser.uid,
+    receiver: receiverUid,
+    message: messageText,
+    timestamp: Date.now()
+  });
+}
+function sendChatMessage(receiverUid, plainText) {
+  let messageText = plainText;
+
+  if (blogToShare) {
+    messageText += `\n\n📄 Shared Blog:\nTitle: ${blogToShare.title}\n${blogToShare.content.substring(0, 150)}...\n[View Blog](${window.location.origin}/index.html?blogId=${blogToShare.blogId})`;
+    blogToShare = null; // Clear after sharing
+  }
+
+  sendMessage(receiverUid, messageText);
+}
+function renderMessage(msg) {
+  const messageDiv = document.createElement("div");
+  messageDiv.innerHTML = msg.message.replace(/\[View Blog\]\((.*?)\)/g, '<a href="$1" target="_blank">View Blog</a>');
+  document.getElementById("chat-box").appendChild(messageDiv);
+}
 
 function updateLikeCount(blogId) {
   db.ref("blogs/" + blogId + "/likes").once("value").then(snapshot => {
@@ -226,7 +282,12 @@ function updateLikeCount(blogId) {
   });
 }
 
-
+function shareBlog(blogId, title, content) {
+  const encodedTitle = encodeURIComponent(title);
+  const encodedContent = encodeURIComponent(content);
+  const shareUrl = `chat.html?shareBlogId=${blogId}&title=${encodedTitle}&content=${encodedContent}`;
+  window.location.href = shareUrl;
+}
     function deleteBlog(blogId) {
       if (confirm("Are you sure you want to delete this blog?")) {
         db.ref("blogs/" + blogId).remove();
@@ -239,3 +300,57 @@ function updateLikeCount(blogId) {
    function goToFollowedBlogs() {
     location.href = `followed.html`;
   }
+  let blogToShareId = "";
+
+function openShareModal(blogId) {
+  blogToShareId = blogId;
+  document.getElementById("shareModal").style.display = "block";
+  loadUsersToShare();
+}
+
+function closeShareModal() {
+  blogToShareId = "";
+  document.getElementById("shareModal").style.display = "none";
+}
+
+function loadUsersToShare() {
+  const container = document.getElementById("shareUserList");
+  container.innerHTML = "Loading...";
+  db.ref("users").once("value").then(snapshot => {
+    container.innerHTML = "";
+    snapshot.forEach(child => {
+      const uid = child.key;
+      const username = child.val().username;
+      if (uid === currentUserId) return;
+
+      const div = document.createElement("div");
+      div.style.padding = "10px";
+      div.style.cursor = "pointer";
+      div.style.borderBottom = "1px solid #444";
+      div.innerHTML = `<b>${username}</b>`;
+      div.onclick = () => shareBlogWithUser(uid, username);
+      container.appendChild(div);
+    });
+  });
+}
+
+function shareBlogWithUser(uid, username) {
+  db.ref(`blogs/${blogToShareId}`).once("value").then(blogSnap => {
+    if (!blogSnap.exists()) return;
+
+    const blog = blogSnap.val();
+    const chatId = [currentUserId, uid].sort().join("_");
+
+    const message = `📢 <b>${currentUsername}</b> shared a blog:\n\n<b>${blog.title}</b>\n${blog.content}\n\n👉 <a href="singleblog.html?blogId=${blogToShareId}">View Blog</a>`;
+
+    db.ref(`chats/${chatId}`).push({
+      senderId: currentUserId,
+      senderName: currentUsername,
+      message: message,
+      timestamp: Date.now()
+    }).then(() => {
+      closeShareModal();
+      alert(`Shared with ${username}`);
+    });
+  });
+}
