@@ -154,6 +154,7 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
               <input type="text" id="comment-input-${key}" placeholder="Write a comment..." />
               <button onclick="postComment('${key}')">Post</button>
             </div>
+            <hr/>
             <div class="comment-list" id="comment-list-${key}">
               ${commentsHTML}
             </div>
