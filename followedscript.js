@@ -127,8 +127,9 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
      <div class="blog-actions-right">
     <div class="icon-btn" onclick="toggleLike('${key}')" title="Like" >
       <img id="like-icon-${key}" src="${blog.likes && blog.likes[currentUserId] ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" />
-      <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">${likeCount}</span>
-
+      <div class="like-count-overlay" id="like-count-${key}">
+        ${(blog.likes ? Object.keys(blog.likes).length : 0)}
+      </div>
     </div>
 
     <div class="icon-btn" onclick="toggleComments('${key}')" title="Comment">
