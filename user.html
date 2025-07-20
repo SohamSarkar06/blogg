@@ -8,7 +8,223 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-   <link rel="stylesheet" href="userstyle.css">
+  <style>
+        body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://i.postimg.cc/wxhbpLDf/2f20a480a2170030a0568f8e78d5b94a.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .action-circle {
+      width: 70px;
+      height: 70px;
+      background-color: #03dac5;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .action-circle img {
+      width: 35px;
+      height: 35px;
+    }
+    .action-circle:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 15px #03dac5, 0 0 30px rgba(3, 218, 197, 0.4);
+    }
+    .action-circle[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px 30px;
+      margin: 30px auto;
+      width: 100%;
+      max-width: 1000px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      box-sizing: border-box;
+    }
+    .bottom-action-bar {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      background-color: rgba(0, 0, 0, 0.65);
+      padding: 10px 20px;
+      border-radius: 40px;
+      z-index: 999;
+      box-shadow: 0 0 12px rgba(3, 218, 197, 0.4);
+    }
+    .bottom-action-bar .action-circle {
+      width: 50px;
+      height: 50px;
+    }
+    .bottom-action-bar .action-circle img {
+      width: 28px;
+      height: 28px;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; }
+    .stats { display: flex; gap: 20px; margin: 10px 0; }
+    .stats span {
+      cursor: pointer;
+      background: #1a1a1a;
+      padding: 8px 12px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .stats span:hover { background: #2a2a2a; }
+    .user-list {
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .title {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #03dac5;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 10px;
+    }
+    .blog {
+      background: #222;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .blog-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .comments {
+      display: none;
+      margin-top: 10px;
+    }
+    .comment-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+     
+    .comment-section input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      background-color: #333;
+      color: #fff;
+    }
+    .comment-section button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #03dac5;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+     .blog-actions button {
+  background-color: #03dac5;
+  border: none;
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+#following-list {
+  display: none;
+}
+
+.blog-actions button:hover {
+  background-color: #02c0b5;
+}
+    .comment-list {
+      max-height: 150px;
+      overflow-y: auto;
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .comment {
+      margin-bottom: 8px;
+    }
+    .comment-username {
+      font-weight: bold;
+      color: #03dac5;
+    }
+    .blog-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.blog-actions .action-circle {
+  width: 45px;
+  height: 45px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(3, 218, 197, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.blog-actions .action-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #03dac5;
+}
+
+.blog-actions .action-circle img {
+  width: 40px;
+  height: 40px;
+}
+
+.blog-actions .action-circle span {
+  position: absolute;
+  font-size: 5px;
+  font-weight: bold;
+  color: #0c0c0c;
+}
+.blog-actions[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(10, 10, 10, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+  </style>
 </head>
 <body>
   <div class="container">
@@ -40,5 +256,143 @@
     <h2>Blogs</h2>
     <div id="blog-list"></div>
   </div>
-  <script src="userscript.js"></script>
+  <script >    const firebaseConfig = {
+      apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
+      authDomain: "blogsh-1fb30.firebaseapp.com",
+      databaseURL: "https://blogsh-1fb30-default-rtdb.firebaseio.com",
+      projectId: "blogsh-1fb30",
+      storageBucket: "blogsh-1fb30.appspot.com",
+      messagingSenderId: "621522269665",
+      appId: "1:621522269665:web:6e0075fef40dd094b9cea0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let currentUsername = "";
+
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get('uid');
+    if (!uid) {
+      document.body.innerHTML = "<p>User ID not found in URL.</p>";
+      throw new Error("Missing UID");
+    }
+
+    db.ref("users/" + uid).once("value").then(snapshot => {
+      const user = snapshot.val();
+      document.getElementById("username").innerText = user.username || "Unknown";
+      currentUsername = user.username;
+    });
+     const likedBlogs = {};
+
+  function isLiked(blogId) {
+    return likedBlogs[blogId];
+  }
+
+
+    db.ref("users/" + uid + "/following").once("value").then(snapshot => {
+      const following = snapshot.val() || {};
+      document.getElementById("following-count").innerText = Object.keys(following).length;
+
+      let list = "";
+      for (let id in following) {
+        db.ref("users/" + id + "/username").once("value").then(nameSnap => {
+          list += `<p><a href="user.html?uid=${id}" style="color:#ccc;">${nameSnap.val() || "Unknown"}</a></p>`;
+          document.getElementById("following-list").innerHTML = list;
+        });
+      }
+    });
+
+    document.getElementById("following-tab").addEventListener("click", () => {
+      const list = document.getElementById("following-list");
+      list.style.display = list.style.display === "none" ? "block" : "none";
+    });
+
+    function toggleLike(blogId) {
+    const ref = db.ref(`blogs/${blogId}/likes/${uid}`);
+    ref.once("value").then(snap => {
+      if (snap.exists()) {
+        ref.remove();
+        likedBlogs[blogId] = false;
+      } else {
+        ref.set(true);
+        likedBlogs[blogId] = true;
+      }
+    }).then(() => updateLikeCount(blogId));
+  }
+    function updateLikeCount(blogId) {
+    db.ref(`blogs/${blogId}/likes`).once("value").then(snap => {
+      const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+      document.getElementById(`like-count-${blogId}`).innerText = count;
+      const img = document.getElementById(`like-icon-${blogId}`);
+      if (snap.hasChild(uid)) {
+        likedBlogs[blogId] = true;
+        img.src = "https://img.icons8.com/ios-filled/50/love-circled.png";
+      } else {
+        likedBlogs[blogId] = false;
+        img.src = "https://img.icons8.com/ios/50/love-circled.png";
+      }
+    });
+  }
+
+    function toggleComments(blogId) {
+      const section = document.getElementById(`comments-${blogId}`);
+      section.style.display = section.style.display === "none" ? "block" : "none";
+      loadComments(blogId);
+    }
+
+    function postComment(blogId) {
+      const input = document.getElementById(`comment-input-${blogId}`);
+      const text = input.value.trim();
+      if (!text) return;
+      const ref = db.ref(`blogs/${blogId}/comments`).push();
+      ref.set({ uid, username: currentUsername, text, timestamp: Date.now() })
+        .then(() => { input.value = ''; loadComments(blogId); });
+    }
+
+    function loadComments(blogId) {
+      db.ref(`blogs/${blogId}/comments`).orderByChild("timestamp").once("value").then(snap => {
+        const list = document.getElementById(`comment-list-${blogId}`);
+        let html = "";
+        snap.forEach(c => {
+          const data = c.val();
+          html += `<div class='comment'><span class='comment-username'>${data.username}</span>: ${data.text}</div>`;
+        });
+        list.innerHTML = html || "<div class='comment'>No comments yet.</div>";
+      });
+    }
+
+    db.ref("blogs").orderByChild("uid").equalTo(uid).once("value").then(snapshot => {
+    const blogs = snapshot.val() || {};
+    let output = "";
+    for (let key in blogs) {
+      const blog = blogs[key];
+      output += `
+        <div class="blog">
+          <h3>${blog.title}</h3>
+          <p>${blog.content}</p>
+          <div class="blog-actions">
+            <div class="action-circle" onclick="toggleLike('${key}')" title="Like" >
+              <img id="like-icon-${key}" src="https://img.icons8.com/ios/50/love-circled.png" />
+               <span id="like-count-${blogId}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+            </div>
+            <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
+              <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
+            </div>
+          </div>
+          <div class="comments" id="comments-${key}">
+            <div class="comment-section">
+              <input type="text" id="comment-input-${key}" placeholder="Write a comment...">
+              <button onclick="postComment('${key}')">Post</button>
+            </div>
+            <hr/>
+            <div class="comment-list" id="comment-list-${key}"></div>
+          </div>
+        </div>`;
+    }
+    document.getElementById("blog-list").innerHTML = output || "<p>No blogs yet.</p>";
+
+    for (let key in blogs) {
+      updateLikeCount(key);
+    }
+  });</script>
 </html>
