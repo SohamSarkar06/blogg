@@ -65,7 +65,7 @@ ${uid !== currentUserId ? `
   <button class="follow-btn" onclick="toggleFollow('${uid}')">
     ${isFollowing ? 'Unfollow' : 'Follow'}
   </button>` : ''}
-<button class="share-btn" onclick="openShareModal('${blogId}')">📤 Share</button>
+<button class="share-btn" onclick="openShareModal('${blogId}')"><img src="https://img.icons8.com/material-sharp/24/share.png"/></button>
 
             </div>
             <hr/>
