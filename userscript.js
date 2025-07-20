@@ -11,6 +11,14 @@ const firebaseConfig = {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let currentUsername = "";
+    let currentUserId = "";
+
+// Get current logged-in user
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    currentUserId = user.uid;
+  }
+});
 
     const params = new URLSearchParams(window.location.search);
     const uid = params.get('uid');
@@ -109,7 +117,7 @@ const firebaseConfig = {
     for (let key in blogs) {
       const blog = blogs[key];
       output += `
-        <div class="blog">
+        <div class="blog" style="position: relative;">
           <h3>${blog.title}</h3>
           <p>${blog.content}</p>
           <div class="blog-actions">
@@ -118,6 +126,8 @@ const firebaseConfig = {
           <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
 
             </div>
+            <div class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/material-sharp/24/share.png"/></div>
+ 
             <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
               <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
             </div>
@@ -138,3 +148,63 @@ const firebaseConfig = {
       updateLikeCount(key);
     }
   });
+
+ function openShareModal(blogId) {
+  blogToShareId = blogId;
+  document.getElementById("shareModal").style.display = "block";
+  loadUsersForSharing();
+}
+
+function closeShareModal() {
+  document.getElementById("shareModal").style.display = "none";
+  document.getElementById("shareUserList").innerHTML = ""; // Clear previous list
+}
+
+
+let blogToShareId = "";
+
+function loadUsersForSharing() {
+  const shareUserList = document.getElementById("shareUserList");
+  db.ref("users").once("value", (snapshot) => {
+    shareUserList.innerHTML = "";
+    snapshot.forEach((userSnap) => {
+      const userId = userSnap.key;
+      const userData = userSnap.val();
+      if (userId !== currentUserId) {
+        const userDiv = document.createElement("div");
+        userDiv.style.padding = "10px";
+        userDiv.style.borderBottom = "1px solid #555";
+        userDiv.style.cursor = "pointer";
+        userDiv.innerHTML = `
+          <strong>${userData.username || "Unnamed User"}</strong>
+          <button style="float:right; padding:4px 8px; border:none; border-radius:5px; background:#03dac5; color:black; cursor:pointer;"
+            onclick="shareBlogWithUser('${userId}', '${userData.username}')">Send</button>
+        `;
+        shareUserList.appendChild(userDiv);
+      }
+    });
+  });
+}
+
+
+function shareBlogWithUser(receiverId, receiverUsername) {
+  const timestamp = new Date().getTime();
+  const chatId = currentUserId < receiverId ? currentUserId + receiverId : receiverId + currentUserId;
+
+  db.ref("blogs/" + blogToShareId).once("value", (snap) => {
+    if (snap.exists()) {
+      const blog = snap.val();
+      const messageData = {
+        type: "blog",
+        blogId: blogToShareId,
+        senderId: currentUserId,
+        senderUsername: currentUsername,
+        timestamp: timestamp
+      };
+      db.ref(`chats/${chatId}/messages`).push(messageData).then(() => {
+        alert(`Blog shared with ${receiverUsername}`);
+        closeShareModal();
+      });
+    }
+  });
+}
