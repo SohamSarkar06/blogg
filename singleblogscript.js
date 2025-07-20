@@ -54,7 +54,7 @@
           <div class="blog-content">
             <h4>${title}</h4>
             <p>${content}</p>
-            <small>Author: <a href="user.html?uid=${uid}&username=${username}" style="color: #03dac5; text-decoration: none;">${username}</a> | ${time}</small>
+            <small>Author: <a href="user.html?uid=${uid}&username=${username}" style="color: #03dac5; text-decoration: none;">${username}</a>   ${time}</small>
             <div class="button-row">
               <div class="like-circle" onclick="toggleLike('${blogId}')" id="like-btn-${blogId}" title="Like">
                 <img src="${hasLiked ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" class="like-icon"/>
