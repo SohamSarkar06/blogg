@@ -14,30 +14,29 @@ window.addEventListener("DOMContentLoaded", () => {
   let currentUsername = "";
 
   const params = new URLSearchParams(window.location.search);
-  const uid = params.get('uid');
+  const uid = params.get("uid");
+
   if (!uid) {
-    document.body.innerHTML = "<p>User ID not found in URL.</p>";
-    throw new Error("Missing UID");
+    document.body.innerHTML = "<p style='color:white'>User ID not found in URL.</p>";
+    return;
   }
 
   const likedBlogs = {};
-  function isLiked(blogId) {
-    return likedBlogs[blogId];
-  }
 
-  db.ref("users/" + uid).once("value").then(snapshot => {
+  db.ref("users/" + uid).once("value").then((snapshot) => {
     const user = snapshot.val();
-    document.getElementById("username").innerText = user.username || "Unknown";
-    currentUsername = user.username;
+    document.getElementById("username").innerText = user?.username || "Unknown";
+    currentUsername = user?.username || "Unknown";
   });
 
-  db.ref("users/" + uid + "/following").once("value").then(snapshot => {
+  // Following List
+  db.ref("users/" + uid + "/following").once("value").then((snapshot) => {
     const following = snapshot.val() || {};
     document.getElementById("following-count").innerText = Object.keys(following).length;
 
     let list = "";
     for (let id in following) {
-      db.ref("users/" + id + "/username").once("value").then(nameSnap => {
+      db.ref("users/" + id + "/username").once("value").then((nameSnap) => {
         list += `<p><a href="user.html?uid=${id}" style="color:#ccc;">${nameSnap.val() || "Unknown"}</a></p>`;
         document.getElementById("following-list").innerHTML = list;
       });
@@ -51,7 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function toggleLike(blogId) {
     const ref = db.ref(`blogs/${blogId}/likes/${uid}`);
-    ref.once("value").then(snap => {
+    ref.once("value").then((snap) => {
       if (snap.exists()) {
         ref.remove();
         likedBlogs[blogId] = false;
@@ -63,7 +62,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateLikeCount(blogId) {
-    db.ref(`blogs/${blogId}/likes`).once("value").then(snap => {
+    db.ref(`blogs/${blogId}/likes`).once("value").then((snap) => {
       const count = snap.exists() ? Object.keys(snap.val()).length : 0;
       document.getElementById(`like-count-${blogId}`).innerText = count;
       const img = document.getElementById(`like-icon-${blogId}`);
@@ -88,15 +87,22 @@ window.addEventListener("DOMContentLoaded", () => {
     const text = input.value.trim();
     if (!text) return;
     const ref = db.ref(`blogs/${blogId}/comments`).push();
-    ref.set({ uid, username: currentUsername, text, timestamp: Date.now() })
-      .then(() => { input.value = ''; loadComments(blogId); });
+    ref.set({
+      uid,
+      username: currentUsername,
+      text,
+      timestamp: Date.now()
+    }).then(() => {
+      input.value = "";
+      loadComments(blogId);
+    });
   }
 
   function loadComments(blogId) {
-    db.ref(`blogs/${blogId}/comments`).orderByChild("timestamp").once("value").then(snap => {
+    db.ref(`blogs/${blogId}/comments`).orderByChild("timestamp").once("value").then((snap) => {
       const list = document.getElementById(`comment-list-${blogId}`);
       let html = "";
-      snap.forEach(c => {
+      snap.forEach((c) => {
         const data = c.val();
         html += `<div class='comment'><span class='comment-username'>${data.username}</span>: ${data.text}</div>`;
       });
@@ -104,39 +110,46 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  db.ref(`blogs/${uid}`).once("value").then(snapshot => {
-    const blogs = snapshot.val() || {};
+  // 🔥 FETCH BLOGS CORRECTLY: Loop over all blogs and match by uid
+  db.ref("blogs").once("value").then((snapshot) => {
+    const allBlogs = snapshot.val() || {};
     let output = "";
-    for (let key in blogs) {
-      const blog = blogs[key];
-      output += `
-        <div class="blog">
-          <h3>${blog.title}</h3>
-          <p>${blog.content}</p>
-          <div class="blog-actions">
-            <div class="action-circle" onclick="toggleLike('${key}')" title="Like">
-              <img id="like-icon-${key}" src="https://img.icons8.com/ios/50/love-circled.png" />
-              <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+
+    for (let blogId in allBlogs) {
+      const blog = allBlogs[blogId];
+      if (blog.uid === uid) {
+        output += `
+          <div class="blog">
+            <h3>${blog.title}</h3>
+            <p>${blog.content}</p>
+            <div class="blog-actions">
+              <div class="action-circle" onclick="toggleLike('${blogId}')" title="Like">
+                <img id="like-icon-${blogId}" src="https://img.icons8.com/ios/50/love-circled.png" />
+                <span id="like-count-${blogId}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+              </div>
+              <div class="action-circle" onclick="toggleComments('${blogId}')" title="Comment">
+                <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
+              </div>
             </div>
-            <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
-              <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
+            <div class="comments" id="comments-${blogId}">
+              <div class="comment-section">
+                <input type="text" id="comment-input-${blogId}" placeholder="Write a comment...">
+                <button onclick="postComment('${blogId}')">Post</button>
+              </div>
+              <hr/>
+              <div class="comment-list" id="comment-list-${blogId}"></div>
             </div>
-          </div>
-          <div class="comments" id="comments-${key}">
-            <div class="comment-section">
-              <input type="text" id="comment-input-${key}" placeholder="Write a comment...">
-              <button onclick="postComment('${key}')">Post</button>
-            </div>
-            <hr/>
-            <div class="comment-list" id="comment-list-${key}"></div>
-          </div>
-        </div>`;
+          </div>`;
+      }
     }
+
     document.getElementById("blog-list").innerHTML = output || "<p>No blogs yet.</p>";
 
-    // After rendering blogs, update likes for each
-    for (let key in blogs) {
-      updateLikeCount(key);
+    // Call updateLikeCount after rendering
+    for (let blogId in allBlogs) {
+      if (allBlogs[blogId].uid === uid) {
+        updateLikeCount(blogId);
+      }
     }
   });
 });
