@@ -661,7 +661,7 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
           <p>${blog.content}</p>
           <small>${authorName}</small>
         <div class="blog-actions">
-  <div class="blog-actions-right">
+  <div class="blog-actions-left">
     ${isOwn ? `
       <div class="icon-btn" onclick="enableEdit('${key}')" title="Edit">
         <img src="https://img.icons8.com/material/40/create-new.png" />
@@ -671,7 +671,7 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
       </div>
     ` : ''}
   </div>
-  <div class="blog-actions-left">
+  <div class="blog-actions-right">
     <div class="icon-btn" onclick="toggleLike('${key}')" title="Like" >
       <img id="like-icon-${key}" src="${blog.likes && blog.likes[currentUserId] ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" />
       <div class="like-count-overlay" id="like-count-${key}">
