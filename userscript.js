@@ -108,30 +108,29 @@
     let output = "";
     for (let key in blogs) {
       const blog = blogs[key];
-      output += `
-        <div class="blog">
-          <h3>${blog.title}</h3>
-          <p>${blog.content}</p>
-          <div class="blog-actions">
-            <div class="action-circle" onclick="toggleLike('${key}')" title="Like" >
-              <img id="like-icon-${key}" src="https://img.icons8.com/ios/50/love-circled.png" />
-             <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">${likeCount}</span>
-
-            </div>
-            <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
-              <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
-            </div>
-          </div>
-          <div class="comments" id="comments-${key}">
-            <div class="comment-section">
-              <input type="text" id="comment-input-${key}" placeholder="Write a comment...">
-              <button onclick="postComment('${key}')">Post</button>
-            </div>
-            <hr/>
-            <div class="comment-list" id="comment-list-${key}"></div>
-          </div>
-        </div>`;
-    }
+     output += `
+  <div class="blog">
+    <h3>${blog.title}</h3>
+    <p>${blog.content}</p>
+    <div class="blog-actions">
+      <div class="action-circle" onclick="toggleLike('${key}')" title="Like" >
+        <img id="like-icon-${key}" src="https://img.icons8.com/ios/50/love-circled.png" />
+        <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+      </div>
+      <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
+        <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
+      </div>
+    </div>
+    <div class="comments" id="comments-${key}">
+      <div class="comment-section">
+        <input type="text" id="comment-input-${key}" placeholder="Write a comment...">
+        <button onclick="postComment('${key}')">Post</button>
+      </div>
+      <hr/>
+      <div class="comment-list" id="comment-list-${key}"></div>
+    </div>
+  </div>`;
+)
     document.getElementById("blog-list").innerHTML = output || "<p>No blogs yet.</p>";
 
     for (let key in blogs) {
