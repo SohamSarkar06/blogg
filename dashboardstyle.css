@@ -1,0 +1,316 @@
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://i.postimg.cc/wxhbpLDf/2f20a480a2170030a0568f8e78d5b94a.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #03dac5;
+      text-shadow: 2px 2px 4px #ffffff;
+      margin-top: 10px;
+    }
+
+    .top-bar, .dashboard-header, .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .chat-button, button, input {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    input {
+      background-color: #222;
+      color: white;
+      width: 100%;
+    }
+
+    button {
+      background-color: #03dac5;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .container, .container1 {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px 20px;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .blog-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .blog-content, .comment-list {
+      flex: 1 1 100%;
+    }
+
+    .comment-list {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      overflow-y: auto;
+      max-height: 200px;
+    }
+
+    .comment {
+      margin-top: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    .comment-username {
+      color: #03dac5;
+      font-weight: bold;
+    }
+
+    .comment-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .comment-section input {
+      flex: 1;
+    }
+
+    .comment-section button {
+      flex: 0 0 auto;
+    }
+
+    .action-circle {
+      width: 70px;
+      height: 70px;
+      background-color: #03dac5;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .action-circle img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .action-circle:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 15px #03dac5, 0 0 30px rgba(3, 218, 197, 0.4);
+    }
+
+    .action-circle[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    
+
+    @media (min-width: 769px) {
+      .blog-content {
+        flex: 2;
+      }
+      .comment-list {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .chat-button {
+        position: static;
+        align-self: center;
+        margin-bottom: 10px;
+      }
+    }
+    .bottom-action-bar {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 10px 20px;
+  border-radius: 40px;
+  z-index: 999;
+  box-shadow: 0 0 12px rgba(3, 218, 197, 0.4);
+}
+
+.bottom-action-bar .action-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-action-bar .action-circle img {
+  width: 28px;
+  height: 28px;
+}
+
+.like-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.like-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #da69d3;
+}
+
+.like-count {
+  position: absolute;
+  
+  bottom: 15px;
+  
+  background-color: rgba(135, 175, 193,0);
+  color: rgb(8, 8, 8);
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.like-circle[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .delete-btn[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -25px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+.follow-btn{
+  float :right;
+}
+.delete-btn{
+float :right;
+width: 50px;
+  height: 50px;
+  background-color: #03dac5;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+}
+.delete-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #da69d3;
+}
+
+@media (max-width: 768px) {
+  .bottom-action-bar {
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  .bottom-action-bar .action-circle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .bottom-action-bar .action-circle img {
+    width: 24px;
+    height: 24px;
+  }
+  .like-circle {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.like-count {
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+}
+
+}
+
+
