@@ -17,6 +17,18 @@ blog-content{
     width: 100%;
 
 }
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  background-color: #222;
+  color: white;
+  resize: vertical; /* optional: allow vertical resizing only */
+}
+
     .container {
       background: rgba(0, 0, 0, 0.7); /* more transparent */
       padding: 30px;
