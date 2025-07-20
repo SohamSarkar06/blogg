@@ -115,7 +115,8 @@
           <div class="blog-actions">
             <div class="action-circle" onclick="toggleLike('${key}')" title="Like" >
               <img id="like-icon-${key}" src="https://img.icons8.com/ios/50/love-circled.png" />
-              <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+             <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">${likeCount}</span>
+
             </div>
             <div class="action-circle" onclick="toggleComments('${key}')" title="Comment">
               <img src="https://img.icons8.com/ios-glyphs/100/speech-bubble.png"/>
