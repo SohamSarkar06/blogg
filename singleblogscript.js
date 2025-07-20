@@ -55,15 +55,18 @@
             <h4>${title}</h4>
             <p>${content}</p>
             <small>Author: <a href="user.html?uid=${uid}&username=${username}" style="color: #03dac5; text-decoration: none;">${username}</a>   ${time}</small>
+             
             <div class="button-row">
               <div class="like-circle" onclick="toggleLike('${blogId}')" id="like-btn-${blogId}" title="Like">
                 <img src="${hasLiked ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" class="like-icon"/>
                 <span id="like-count-${blogId}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">${likeCount}</span>
               </div>
-              ${uid !== currentUserId ? `
-                <button class="follow-btn" onclick="toggleFollow('${uid}')">
-                  ${isFollowing ? 'Unfollow' : 'Follow'}
-                </button>` : ''}
+${uid !== currentUserId ? `
+  <button class="follow-btn" onclick="toggleFollow('${uid}')">
+    ${isFollowing ? 'Unfollow' : 'Follow'}
+  </button>` : ''}
+<button class="share-btn" onclick="openShareModal('${blogId}')">📤 Share</button>
+
             </div>
             <hr/>
             <div class="comment-section">
@@ -131,3 +134,65 @@
           });
         });
     }
+
+
+ function openShareModal(blogId) {
+  blogToShareId = blogId;
+  document.getElementById("shareModal").style.display = "block";
+  loadUsersForSharing();
+}
+
+function closeShareModal() {
+  document.getElementById("shareModal").style.display = "none";
+  document.getElementById("shareUserList").innerHTML = ""; // Clear previous list
+}
+
+let currentUserId = "";
+let currentUsername = "";
+let blogToShareId = "";
+
+function loadUsersForSharing() {
+  const shareUserList = document.getElementById("shareUserList");
+  db.ref("users").once("value", (snapshot) => {
+    shareUserList.innerHTML = "";
+    snapshot.forEach((userSnap) => {
+      const userId = userSnap.key;
+      const userData = userSnap.val();
+      if (userId !== currentUserId) {
+        const userDiv = document.createElement("div");
+        userDiv.style.padding = "10px";
+        userDiv.style.borderBottom = "1px solid #555";
+        userDiv.style.cursor = "pointer";
+        userDiv.innerHTML = `
+          <strong>${userData.username || "Unnamed User"}</strong>
+          <button style="float:right; padding:4px 8px; border:none; border-radius:5px; background:#03dac5; color:black; cursor:pointer;"
+            onclick="shareBlogWithUser('${userId}', '${userData.username}')">Send</button>
+        `;
+        shareUserList.appendChild(userDiv);
+      }
+    });
+  });
+}
+
+
+function shareBlogWithUser(receiverId, receiverUsername) {
+  const timestamp = new Date().getTime();
+  const chatId = currentUserId < receiverId ? currentUserId + receiverId : receiverId + currentUserId;
+
+  db.ref("blogs/" + blogToShareId).once("value", (snap) => {
+    if (snap.exists()) {
+      const blog = snap.val();
+      const messageData = {
+        type: "blog",
+        blogId: blogToShareId,
+        senderId: currentUserId,
+        senderUsername: currentUsername,
+        timestamp: timestamp
+      };
+      db.ref(`chats/${chatId}/messages`).push(messageData).then(() => {
+        alert(`Blog shared with ${receiverUsername}`);
+        closeShareModal();
+      });
+    }
+  });
+}
