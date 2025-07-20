@@ -81,7 +81,10 @@
       margin-bottom: 20px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
-
+      .blog-box:hover {
+  transform: scale(1.02);
+}
+  
     .blog-content, .comment-list {
       flex: 1 1 100%;
     }
