@@ -13,6 +13,10 @@
       text-shadow: 2px 2px 4px #ffffff;
       margin-top: 20px;
     }
+blog-content{
+    width: 100%;
+
+}
     .container {
       background: rgba(0, 0, 0, 0.7); /* more transparent */
       padding: 30px;
