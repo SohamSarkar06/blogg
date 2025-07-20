@@ -186,4 +186,7 @@ textarea {
     width: 24px;
     height: 24px;
   }
+    textarea {
+  width: 100%;
+    }
 }
