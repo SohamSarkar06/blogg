@@ -422,6 +422,7 @@ a {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+  width:90%
 }
 
 .icon-btn {
@@ -663,14 +664,16 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
   </div>
   ${isOwn ? `
   <div class="k">
+  ${isOwn ? `
     <div class="icon-btn" onclick="enableEdit('${key}')" title="Edit" >
       <img src="https://img.icons8.com/material-outlined/24/create-new.png" />
     </div>
     <div class="icon-btn" onclick="deleteBlog('${key}')" title="Delete">
       <img src="https://img.icons8.com/material-sharp/24/filled-trash.png" />
     </div>
+     ` : ''}
     </div>
-  ` : ''}
+ 
 </div>
 
           <div class="comments" id="comments-${key}" style="display:none;">
