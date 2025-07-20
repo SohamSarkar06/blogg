@@ -135,7 +135,8 @@
       <div class="button-row">
         <div class="like-circle" onclick="toggleLike('${key}')" id="like-btn-${key}" title="Like">
   <img src="${hasLiked ? 'https://img.icons8.com/ios-filled/50/love-circled.png' : 'https://img.icons8.com/ios/50/love-circled.png'}" class="like-icon"/>
-  <span class="like-count" id="like-count-${key}">${likeCount}</span>
+                <span id="like-count-${key}" style="position: absolute; color: black; font-size: 10px; font-weight: bold;">0</span>
+
 </div>
 
         ${blog.uid === currentUserId ? ` 
