@@ -58,7 +58,12 @@
 </div>
 
    
-
+<div id="shareModal" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:#000; padding:20px; border-radius:10px; z-index:1000;">
+  <h3 style="color:#03dac5;">Share Blog</h3>
+  <input type="text" id="shareSearch" placeholder="Search user..." style="width:100%; padding:8px; margin-bottom:10px;" />
+  <div id="shareUserList" style="max-height:300px; overflow-y:auto;"></div>
+  <button onclick="closeShareModal()" style="margin-top:10px;">Cancel</button>
+</div>
 
 
 <h3>Explore Blogs</h3>
@@ -70,6 +75,7 @@
 
       
   </div>
+  
  
  <script src="dashboardscript.js"></script>
 
