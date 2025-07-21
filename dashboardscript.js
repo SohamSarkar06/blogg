@@ -217,7 +217,13 @@ const firebaseConfig = {
     }
   });
 }
-
+function deleteBlog(blogId) {
+  if (confirm("Are you sure you want to delete this blog?")) {
+    db.ref("blogs/" + blogId).remove().then(() => {
+      loadOwnBlogs();
+    });
+  }
+}
 function openShareModal(blogId) {
   blogToShareId = blogId;
   document.getElementById("shareModal").style.display = "block";
@@ -312,7 +318,7 @@ function fetchNotes() {
       noteCard.style.overflow = "hidden";
       noteCard.style.whiteSpace = "normal";
       noteCard.style.position = "relative";
-      noteCard.style.fontSize = "11px";
+      noteCard.style.fontSize = "15px";
 
       noteCard.innerHTML = `
   <a href="user.html?uid=${note.uid}" style="color: black; text-decoration: none; font-weight: bold;">
