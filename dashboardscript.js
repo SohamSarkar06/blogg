@@ -1,4 +1,4 @@
-    const firebaseConfig = {
+const firebaseConfig = {
       apiKey: "AIzaSyAq95vU6ks35SOJ8yh-ACr3xJmuz3Z9BAI",
       authDomain: "blogsh-1fb30.firebaseapp.com",
       databaseURL: "https://blogsh-1fb30-default-rtdb.firebaseio.com",
@@ -82,6 +82,7 @@
       document.getElementById("account-section").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
       document.getElementById("display-username").innerText = username;
+       fetchNotes();
       fetchBlogs();
     }
 
@@ -275,5 +276,101 @@ function shareBlogWithUser(receiverId, receiverUsername) {
         closeShareModal();
       });
     }
+  });
+}
+function fetchNotes() {
+  
+  const notesBar = document.getElementById("notes-bar");
+  notesBar.innerHTML = "";
+
+  db.ref("notes").once("value").then(snapshot => {
+    const notes = [];
+
+    snapshot.forEach(child => {
+      const note = child.val();
+      note.id = child.key;
+      if (Date.now() - note.timestamp <= 86400000) {
+        notes.push(note);
+      } else {
+        // Remove expired note
+        db.ref("notes/" + child.key).remove();
+      }
+    });
+
+    // Sort notes by timestamp descending (latest first)
+    notes.sort((a, b) => b.timestamp - a.timestamp);
+
+    notes.forEach(note => {
+      const noteCard = document.createElement("div");
+      noteCard.style.display = "inline-block";
+      noteCard.style.background = "#03dac5";
+      noteCard.style.color = "#000";
+      noteCard.style.padding = "6px";
+      noteCard.style.borderRadius = "10px";
+      noteCard.style.width = "90px";
+      noteCard.style.height = "90px";
+      noteCard.style.overflow = "hidden";
+      noteCard.style.whiteSpace = "normal";
+      noteCard.style.position = "relative";
+      noteCard.style.fontSize = "11px";
+
+      noteCard.innerHTML = `
+  <a href="user.html?uid=${note.uid}" style="color: black; text-decoration: none; font-weight: bold;">
+    ${note.username}
+  </a><br/>
+  <small>${new Date(note.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+  <p style="margin-top:4px;">${note.text}</p>
+`;
+      if (note.uid === currentUserId) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "x";
+        deleteBtn.style.display = "flex";
+deleteBtn.style.alignItems = "center";
+deleteBtn.style.justifyContent = "center";
+        deleteBtn.title = "Delete Note";
+        deleteBtn.style.position = "absolute";
+        deleteBtn.style.top = "5px";
+        deleteBtn.style.right = "5px";
+        deleteBtn.style.background = "black";
+        deleteBtn.style.color = "#fff";
+        deleteBtn.style.border = "none";
+        deleteBtn.style.borderRadius = "50%";
+        deleteBtn.style.cursor = "pointer";
+        deleteBtn.style.fontSize = "10px";
+        deleteBtn.style.width = "20px";
+        deleteBtn.style.height = "20px";
+        deleteBtn.onclick = () => {
+          if (confirm("Are you sure you want to delete this note?")) {
+            db.ref("notes/" + note.id).remove().then(fetchNotes);
+          }
+        };
+        noteCard.appendChild(deleteBtn);
+      }
+
+      notesBar.appendChild(noteCard);
+    });
+  });
+}
+
+
+function updateNoteCharCount() {
+  const input = document.getElementById("noteInput");
+  const count = input.value.length;
+  document.getElementById("charCount").textContent = `${count}/100`;
+}
+
+function postNote() {
+  const text = document.getElementById("noteInput").value.trim();
+  if (!text) return alert("Note cannot be empty!");
+
+  const noteRef = db.ref("notes").push();
+  noteRef.set({
+    uid: currentUserId,
+    username: currentUsername,
+    text,
+    timestamp: Date.now()
+  }).then(() => {
+    document.getElementById("noteInput").value = "";
+    fetchNotes(); // refresh notes immediately
   });
 }
