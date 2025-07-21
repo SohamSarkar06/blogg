@@ -196,3 +196,23 @@ function shareBlogWithUser(receiverId, receiverUsername) {
     }
   });
 }
+function shareBlogWithUser(uid, username) {
+  db.ref(`blogs/${blogToShareId}`).once("value").then(blogSnap => {
+    if (!blogSnap.exists()) return;
+
+    const blog = blogSnap.val();
+    const chatId = [currentUserId, uid].sort().join("_");
+
+    const message = `📢 <b>${currentUsername}</b> shared a blog:\n\n<b>${blog.title}</b>\n${blog.content}\n\n👉 <a href="singleblog.html?blogId=${blogToShareId}">View Blog</a>`;
+
+    db.ref(`chats/${chatId}`).push({
+      senderId: currentUserId,
+      senderName: currentUsername,
+      message: message,
+      timestamp: Date.now()
+    }).then(() => {
+      closeShareModal();
+      alert(`Shared with ${username}`);
+    });
+  });
+}
