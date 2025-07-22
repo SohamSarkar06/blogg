@@ -1,45 +1,45 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Blog</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-   <link rel="stylesheet" href="createstyle.css">
-</head>
-<body>
-</head>
-<body>
-  <div class="container">
-   <div class="title"><a href="dashboard.html" style="text-decoration: none; color: inherit;">
-      <b><i>blogg</i></b>
-    </a></div><br>
-    <div class="bottom-action-bar">
-  <div class="action-circle" onclick="location.href='dashboard.html'" title="Dashboard">
-    <img src="https://img.icons8.com/fluency-systems-regular/48/content.png" />
-  </div>
-  
-  <div class="action-circle" onclick="location.href='followed.html'" title="My Profile">
-    <img src="https://img.icons8.com/fluency-systems-regular/48/user-male-circle--v1.png"/>
-  </div>
-  <div class="action-circle" onclick="location.href='chat.html'" title="Chat">
-    <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
-  </div>
-  <div class="action-circle" onclick="location.href='index.html'" title="Logout">
-    <img src="https://img.icons8.com/ios-filled/50/exit.png" />
-  </div>
-</div>
-    <h2>Create a New Blog</h2>
-    <input type="text" id="blog-title" placeholder="Blog Title">
-    <textarea id="blog-content" placeholder="Write your blog..." rows="10"></textarea>
-    <button onclick="postBlog()">Post Blog</button>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="createstyle.css">
+  </head>
+  <body>
+  </head>
+  <body>
+    <div class="container">
+    <div class="title"><a href="dashboard.html" style="text-decoration: none; color: inherit;">
+        <b><i>blogg</i></b>
+      </a></div><br>
+      <div class="bottom-action-bar">
+    <div class="action-circle" onclick="location.href='dashboard.html'" title="Dashboard">
+      <img src="https://img.icons8.com/fluency-systems-regular/48/content.png" />
+    </div>
     
+    <div class="action-circle" onclick="location.href='followed.html'" title="My Profile">
+      <img src="https://img.icons8.com/fluency-systems-regular/48/user-male-circle--v1.png"/>
+    </div>
+    <div class="action-circle" onclick="location.href='chat.html'" title="Chat">
+      <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
+    </div>
+    <div class="action-circle" onclick="location.href='index.html'" title="Logout">
+      <img src="https://img.icons8.com/ios-filled/50/exit.png" />
+    </div>
   </div>
+      <h2>Create a New Blog</h2>
+      <input type="text" id="blog-title" placeholder="Blog Title">
+      <textarea id="blog-content" placeholder="Write your blog..." rows="10"></textarea>
+      <button onclick="postBlog()">Post Blog</button>
+      
+    </div>
 
-  <script src="createscript.js"></script>
-</body>
-</html>
+    <script src="createscript.js"></script>
+  </body>
+  </html>
