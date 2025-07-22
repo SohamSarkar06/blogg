@@ -65,8 +65,8 @@ ${uid !== currentUserId ? `
   <button class="follow-btn" onclick="toggleFollow('${uid}')">
     ${isFollowing ? 'Unfollow' : 'Follow'}
   </button>` : ''}
-<button class="share-btn" onclick="openShareModal('${blogId}')"><img src="https://img.icons8.com/material-sharp/24/share.png"/></button>
-
+<div class="share-btn" onclick="openShareModal('${blogId}')"><img src="https://img.icons8.com/flat-round/30/share--v1.png"/></div>
+ 
             </div>
             <hr/>
             <div class="comment-section">
@@ -194,25 +194,5 @@ function shareBlogWithUser(receiverId, receiverUsername) {
         closeShareModal();
       });
     }
-  });
-}
-function shareBlogWithUser(uid, username) {
-  db.ref(`blogs/${blogToShareId}`).once("value").then(blogSnap => {
-    if (!blogSnap.exists()) return;
-
-    const blog = blogSnap.val();
-    const chatId = [currentUserId, uid].sort().join("_");
-
-    const message = `📢 <b>${currentUsername}</b> shared a blog:\n\n<b>${blog.title}</b>\n${blog.content}\n\n👉 <a href="singleblog.html?blogId=${blogToShareId}">View Blog</a>`;
-
-    db.ref(`chats/${chatId}`).push({
-      senderId: currentUserId,
-      senderName: currentUsername,
-      message: message,
-      timestamp: Date.now()
-    }).then(() => {
-      closeShareModal();
-      alert(`Shared with ${username}`);
-    });
   });
 }
