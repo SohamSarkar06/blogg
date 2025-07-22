@@ -42,7 +42,9 @@
       font-size: 1rem;
       transition: background 0.3s;
     }
-
+    #display-username{
+      color:   #53bd96;
+    }
     input {
       background-color: #222;
       color: white;
@@ -62,7 +64,7 @@
     }
 
     .container, .container1 {
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(20, 20, 20, 0.8);
       padding: 30px 20px;
       margin: 20px auto;
       width: 100%;
@@ -70,7 +72,7 @@
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     }
-
+    
     .blog-box {
       display: flex;
       flex-wrap: wrap;
@@ -90,7 +92,7 @@
       height: 45px;
   top: 10px;
   right: 10px;
-  background-color: #03dac5;
+  background-color: rgba(0, 0, 0, 0.0);
   border: none;
   color: black;
   font-weight: bold;
@@ -104,7 +106,7 @@ transition: transform 0.3s ease, box-shadow 0.3s ease;
 
 .share-btn:hover {
    transform: scale(1.08);
-  background-color: #45a049;
+  
 }
 .share-btn[title]:hover::after {
       content: attr(title);
@@ -242,8 +244,8 @@ transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .like-circle {
-  width: 50px;
-  height: 50px;
+  width: 51px;
+  height: 51px;
   background-color: #03dac5;
   border-radius: 50%;
   display: inline-flex;
@@ -306,7 +308,7 @@ transition: transform 0.3s ease, box-shadow 0.3s ease;
 float :right;
 width: 50px;
   height: 50px;
-  background-color: #03dac5;
+  background-color: rgba(0, 0, 0, 0.0);
   border-radius: 50%;
   display: inline-flex;
   justify-content: center;
