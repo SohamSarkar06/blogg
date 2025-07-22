@@ -189,7 +189,23 @@ window.addEventListener('DOMContentLoaded', () => {
   };
   document.getElementById("chatArea").classList.add("active");
 }
-
+window.onload = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const blogId = urlParams.get("shareBlogId");
+  const title = urlParams.get("title");
+  const content = urlParams.get("content");
+  const uidToChat = urlParams.get("uid");
+  if (uidToChat) {
+    openChatWithUser(uidToChat);
+  } else {
+    loadUserList(); // fallback
+  }
+  if (blogId && title && content) {
+    // Display the blog preview or attach it to the chat message
+    alert(`You're sharing this blog:\n\nTitle: ${decodeURIComponent(title)}\nContent: ${decodeURIComponent(content)}`);
+    // Now let the user choose a friend and send it as a message
+  }
+};
 
       function goBack() {
         document.getElementById("chatArea").classList.remove("active");
@@ -198,3 +214,36 @@ window.addEventListener('DOMContentLoaded', () => {
       window.sendMessage = sendMessage;
       window.goBack = goBack;
     });
+window.addEventListener("load", () => {
+  const selectedUserId = localStorage.getItem("chatUserId");
+  const selectedUsername = localStorage.getItem("chatUsername");
+
+  if (selectedUserId && selectedUsername) {
+    // Clear it after use
+    localStorage.removeItem("chatUserId");
+    localStorage.removeItem("chatUsername");
+
+    // Auto-open chat with that user
+    openChat(selectedUserId, selectedUsername);
+  }
+});
+function openChatWithUser(uid) {
+  if (uid === currentUserId) return;
+
+  db.ref("users/" + uid).once("value").then(snap => {
+    const user = snap.val();
+    if (!user) return;
+
+    selectedUserId = uid;
+    document.getElementById("chatUserName").textContent = user.username;
+    document.getElementById("chatUserPic").src = user.profile || "https://i.postimg.cc/0N3pdBf3/defaultpfp.jpg";
+    document.getElementById("chatBox").innerHTML = "";
+
+    // Start chat listener
+    listenForMessages();
+
+    // Show chat section
+    document.getElementById("chatSection").style.display = "block";
+    document.getElementById("welcomeSection").style.display = "none";
+  });
+}
