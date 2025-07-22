@@ -120,9 +120,12 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
 
       return `
         <div class="blog-card" data-id="${key}" style="position: relative;">
+              <div class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/flat-round/30/share--v1.png"/></div>
+
           <h4>${blog.title}</h4>
           <p>${blog.content}</p>
           <small>${authorName}</small>
+   
   <div class="blog-actions">
 
      <div class="blog-actions-right">
@@ -132,18 +135,18 @@ function generateBlogCard(blog, key, authorName = 'You', isOwn = false) {
         ${(blog.likes ? Object.keys(blog.likes).length : 0)}
       </div>
     </div>
-      <div class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/material-sharp/24/share.png"/></div>
-    <div class="icon-btn" onclick="toggleComments('${key}')" title="Comment">
-      <img src="https://img.icons8.com/ios-glyphs/40/speech-bubble.png" />
+
+    <div class="icon-btnk" onclick="toggleComments('${key}')" title="Comment">
+      <img src="https://img.icons8.com/material-two-tone/30/speech-bubble.png" />
     </div>
   </div>
   <div class="blog-actions-left">
     ${isOwn ? `
-      <div class="icon-btn" onclick="enableEdit('${key}')" title="Edit">
-        <img src="https://img.icons8.com/material/40/create-new.png" />
+      <div class="icon-btnk" onclick="enableEdit('${key}')" title="Edit">
+        <img src="https://img.icons8.com/material-two-tone/30/edit--v1.png" />
       </div>
-      <div class="icon-btn" onclick="deleteBlog('${key}')" title="Delete">
-        <img src="https://img.icons8.com/material-rounded/40/filled-trash.png" />
+      <div class="icon-btnk" onclick="deleteBlog('${key}')" title="Delete">
+        <img src="https://img.icons8.com/material-two-tone/30/filled-trash.png" />
       </div>
     ` : ''}
   </div>
