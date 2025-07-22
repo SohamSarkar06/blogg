@@ -58,31 +58,38 @@ function signup() {
 }
 
     function login() {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then(async (userCredential) => {
-          await auth.currentUser.reload();
-          const user = auth.currentUser;
-          if (user.emailVerified) {
-            alert("Login successful!");
-            window.location.href = "dashboard.html";
-          } else {
-            alert("Please verify your email before logging in.");
-            auth.signOut();
-          }
-        })
-        .catch((error) => {
-          alert("Login error: " + error.message);
-        });
-    }
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      if (user.emailVerified) {
+        alert("Login successful!");
+        window.location.href = "dashboard.html";
+      } else {
+        alert("Please verify your email before logging in.");
+        auth.signOut();
+      }
+    })
+    .catch((error) => {
+      alert("Login error: " + error.message);
+    });
+}
+
 
     function goToDashboard() {
-      // You can replace this with your actual dashboard page
-      window.location.href = "dashboard.html";
-    }
+  window.location.href = "dashboard.html";
+}
 
     window.onload = () => {
-      toggleAuthForm('login');
-    };
+  toggleAuthForm('login');
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      await user.reload();
+      if (user.emailVerified) {
+        window.location.href = "dashboard.html";
+      }
+    }
+  });
+};
