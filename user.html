@@ -55,6 +55,15 @@
     <div class="stats">
       <span id="following-tab">Following: <span id="following-count">0</span></span>
     </div>
+
+<script>
+  const userId = new URLSearchParams(window.location.search).get("id");
+  document.getElementById("messageBtn").addEventListener("click", () => {
+    if (userId) {
+      window.location.href = `chat.html?uid=${userId}`;
+    }
+  });
+</script>
     <div id="following-list" class="user-list"></div>
     <hr/>
     <h2>Blogs</h2>
