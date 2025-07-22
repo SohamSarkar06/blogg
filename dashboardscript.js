@@ -87,8 +87,11 @@ const firebaseConfig = {
     }
 
     function logout() {
-       location.href = `index.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
-      }
+  auth.signOut().then(() => {
+    window.location.href = "index.html";
+  });
+}
+
         function goToMyBlogs() {
         location.href = `myblogs.html?uid=${currentUserId}&username=${encodeURIComponent(currentUsername)}`;
     }
@@ -139,14 +142,14 @@ const firebaseConfig = {
       </div>
 
  ${blog.uid === currentUserId ? ` 
-          <div class="delete-btn" onclick="deleteBlog('${key}')" title="Delete"><img src="https://img.icons8.com/material-rounded/40/filled-trash.png" /></div>
+          <div class="delete-btn" onclick="deleteBlog('${key}')" title="Delete"><img src="https://img.icons8.com/material-two-tone/40/filled-trash.png" /></div>
         ` : `
           <button class="follow-btn" onclick="toggleFollow('${blog.uid}')">
             ${isFollowing ? 'Unfollow' : 'Follow'}
           </button>
         `}
       
-      <button class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/material-sharp/24/share.png"/></button>
+      <div class="share-btn" onclick="openShareModal('${key}')" title="Share"><img src="https://img.icons8.com/flat-round/30/share--v1.png"/></div>
     </div>
       <hr/>
       <div class="comment-section">
@@ -321,11 +324,13 @@ function fetchNotes() {
       noteCard.style.fontSize = "15px";
 
       noteCard.innerHTML = `
-  <a href="user.html?uid=${note.uid}" style="color: black; text-decoration: none; font-weight: bold;">
-    ${note.username}
-  </a><br/>
-  <small>${new Date(note.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
-  <p style="margin-top:4px;">${note.text}</p>
+  <div onclick='openNoteModal(${JSON.stringify(note)})' style="cursor:pointer;">
+    <a href="user.html?uid=${note.uid}" style="color: black; text-decoration: none; font-weight: bold;" onclick="event.stopPropagation();">
+      ${note.username}
+    </a><br/>
+    <small>${new Date(note.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+    <p style="margin-top:4px;">${note.text}</p>
+  </div>
 `;
       if (note.uid === currentUserId) {
         const deleteBtn = document.createElement("button");
@@ -399,4 +404,14 @@ function shareBlogWithUser(uid, username) {
       alert(`Shared with ${username}`);
     });
   });
+}
+function openNoteModal(note) {
+  document.getElementById("noteModalUsername").innerText = note.username;
+  document.getElementById("noteModalTime").innerText = new Date(note.timestamp).toLocaleString();
+  document.getElementById("noteModalContent").innerText = note.text;
+  document.getElementById("noteModal").style.display = "block";
+}
+
+function closeNoteModal() {
+  document.getElementById("noteModal").style.display = "none";
 }
