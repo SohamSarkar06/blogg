@@ -51,7 +51,7 @@
     
     <div class="dashboard-header">
       <section id="section1">
-      <h2>Welcome, <span id="display-username"></span></h2>
+      <h2 style="color: white;">Welcome, <span id="display-username"></span></h2>
       </section>  
       
       
@@ -67,9 +67,9 @@
   <div class="action-circle" onclick="location.href='chat.html'"title="Chat">
     <img src="https://img.icons8.com/sf-black-filled/64/chat.png" />
   </div>
-  <div class="action-circle" onclick="location.href='index.html'"  title="Logout">
-    <img src="https://img.icons8.com/ios-filled/50/exit.png" />
-  </div>
+  <div class="action-circle" onclick="logout()" title="Logout">
+  <img src="https://img.icons8.com/ios-filled/50/exit.png" />
+</div>
 </div>
 <div id="notes-bar" style="overflow-x:auto; white-space:nowrap; display:flex; gap:10px; padding:10px 0;"></div>
 
@@ -102,6 +102,31 @@
     <div id="shareUserList" style="max-height:300px; overflow-y:auto; color:white;"></div>
   </div>
 </div>
+<div id="noteModal" class="modal" style="display: none;">
+  <div class="modal-content" style="
+    background-color: #222;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: auto;
+    margin-top: 10%;
+    text-align: center;
+    position: relative;
+  ">
+    <span class="close" onclick="closeNoteModal()" style="
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+    ">&times;</span>
+    <h3 id="noteModalUsername" style="color: #03dac5;"></h3>
+    <small id="noteModalTime" style="color: #aaa;"></small>
+    <p id="noteModalContent" style="margin-top: 10px;"></p>
+  </div>
+</div>
+
 
 <h3>Explore Blogs</h3>
   
